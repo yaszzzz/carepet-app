@@ -188,7 +188,7 @@ const ServicesSection = React.forwardRef<HTMLDivElement, ServicesSectionProps>(
               <span className="text-[#31694E]">{title}</span>
             </H1>
             
-            <Lead className="text-gray-700 mb-8">
+            <Lead className="text-gray-200 mb-8">
               {subtitle}
             </Lead>
           </div>
@@ -295,49 +295,7 @@ const ServicesSection = React.forwardRef<HTMLDivElement, ServicesSectionProps>(
           </div>
 
           {/* CTA Section */}
-          <div className="text-center">
-            <H2 className="mb-4 text-[#31694E]">
-              Siap Memesan Layanan?
-            </H2>
-            <P className="text-gray-700 mb-8 max-w-2xl mx-auto">
-              Konsultasikan kebutuhan hewan kesayangan Anda dengan tim profesional kami
-            </P>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                style={{
-                  backgroundColor: '#658C58',
-                  color: 'white'
-                }}
-                className="hover:bg-[#31694E] shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
-              >
-                📅 Booking Sekarang
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="lg"
-                style={{
-                  borderColor: '#BBC863',
-                  color: '#31694E',
-                }}
-                className="hover:bg-[#F0E491]/20"
-              >
-                📞 Konsultasi Gratis
-              </Button>
-            </div>
-            
-            <p className="text-sm text-gray-500 mt-6">
-              Atau hubungi kami di{' '}
-              <a 
-                href="tel:+6281234567890" 
-                className="text-[#658C58] font-semibold hover:underline"
-              >
-                +62 812 3456 7890
-              </a>
-            </p>
-          </div>
-
+       
         </div>
       </section>
     );

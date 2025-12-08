@@ -122,22 +122,25 @@ const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
 
         {/* Card Content */}
         <CardContent className="space-y-4">
-          <P className="text-gray-700 line-clamp-3">
+          <P className="text-sm text-gray-700 line-clamp-3">
             {description}
           </P>
           
           {/* Price & Duration */}
           <div className="flex justify-between items-center pt-4 border-t border-gray-100">
             <div>
-              <span className="text-2xl font-bold text-[#31694E]">
-                {price}
-              </span>
-              <Small className="block text-gray-500 mt-1">
+              <Small className="block text-gray-500 mt-1 text-xs">
                 Mulai dari
               </Small>
+              <span className="text-xl font-bold text-[#31694E]">
+                {price}
+              </span>
             </div>
             
             <div className="text-right">
+              <Small className="text-gray-500">
+                Estimasi waktu
+              </Small>
               <div className="flex items-center text-gray-600">
                 <svg 
                   className="w-4 h-4 mr-1" 
@@ -152,11 +155,8 @@ const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" 
                   />
                 </svg>
-                <span className="font-medium">{duration}</span>
+                <span className="font-small">{duration}</span>
               </div>
-              <Small className="text-gray-500">
-                Estimasi waktu
-              </Small>
             </div>
           </div>
         </CardContent>
@@ -165,7 +165,7 @@ const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
         <CardFooter className="pt-4">
           <div className="flex flex-col sm:flex-row gap-3 w-full">
             <Button
-              className="flex-1"
+              className="flex-1 text-sm"
               style={{
                 backgroundColor: '#658C58',
               }}
@@ -176,7 +176,7 @@ const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
             
             <Button
               variant="outline"
-              className="flex-1"
+              className="flex-1 text-sm"
               style={{
                 borderColor: '#BBC863',
                 color: '#31694E',
