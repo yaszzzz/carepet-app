@@ -8,7 +8,7 @@ interface AuthLayoutProps {
 
 export const AuthLayout = ({ children }: AuthLayoutProps) => {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8 bg-gradient-to-r from-[#F0E491]/20 via-[#BBC863]/10 to-[#658C58]/5">
             <div className="mb-8 flex flex-col items-center">
                 <Link href="/" className="flex items-center gap-2 group">
                     <div className="bg-[#658C58] p-2 rounded-full text-white group-hover:scale-110 transition-transform duration-300">
