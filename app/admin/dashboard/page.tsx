@@ -1,4 +1,5 @@
 import { AdminDashboardLayout } from '@/components/templates/AdminDashboardLayout/AdminDashboardLayout';
+import { prisma } from '@/lib/prisma';
 import {
     PawPrint,
     Home,
@@ -14,42 +15,6 @@ import {
     Users
 } from 'lucide-react';
 import Link from 'next/link';
-
-// Summary Stats Data
-const summaryStats = [
-    {
-        id: '1',
-        label: 'Total Hewan Terdaftar',
-        value: '156',
-        change: '+12 bulan ini',
-        icon: PawPrint,
-        color: 'from-emerald-500 to-teal-600',
-    },
-    {
-        id: '2',
-        label: 'Penitipan Aktif',
-        value: '23',
-        change: '8 check-out hari ini',
-        icon: Home,
-        color: 'from-blue-500 to-cyan-600',
-    },
-    {
-        id: '3',
-        label: 'Pembayaran Pending',
-        value: '7',
-        change: 'Rp 2.450.000 total',
-        icon: Clock,
-        color: 'from-amber-500 to-orange-600',
-    },
-    {
-        id: '4',
-        label: 'Total Layanan',
-        value: '342',
-        change: '+28 minggu ini',
-        icon: Layers,
-        color: 'from-indigo-500 to-purple-600',
-    },
-];
 
 // Management Menu Items
 const managementItems = [
@@ -103,7 +68,60 @@ const managementItems = [
     },
 ];
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+    // Fetch data concurrently
+    const [totalHewan, activeBookings, pendingBookings, totalServices] = await Promise.all([
+        prisma.hewan.count(),
+        prisma.pemesanan.count({
+            where: {
+                status: {
+                    in: ['Proses', 'Menunggu']
+                }
+            }
+        }),
+        prisma.pemesanan.count({
+            where: {
+                status: 'Menunggu'
+            }
+        }),
+        prisma.layanan.count()
+    ]);
+
+    const summaryStats = [
+        {
+            id: '1',
+            label: 'Total Hewan Terdaftar',
+            value: totalHewan.toString(),
+            change: 'Data terbaru',
+            icon: PawPrint,
+            color: 'from-emerald-500 to-teal-600',
+        },
+        {
+            id: '2',
+            label: 'Penitipan Aktif',
+            value: activeBookings.toString(),
+            change: 'Sedang berlangsung',
+            icon: Home,
+            color: 'from-blue-500 to-cyan-600',
+        },
+        {
+            id: '3',
+            label: 'Menunggu Konfirmasi',
+            value: pendingBookings.toString(),
+            change: 'Perlu tindakan',
+            icon: Clock,
+            color: 'from-amber-500 to-orange-600',
+        },
+        {
+            id: '4',
+            label: 'Total Layanan',
+            value: totalServices.toString(),
+            change: 'Tersedia',
+            icon: Layers,
+            color: 'from-indigo-500 to-purple-600',
+        },
+    ];
+
     return (
         <AdminDashboardLayout>
             {/* Dashboard Header */}

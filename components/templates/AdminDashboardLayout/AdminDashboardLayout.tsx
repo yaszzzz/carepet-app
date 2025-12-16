@@ -35,11 +35,17 @@ const menuItems = [
 
 
 import { signOutAdmin } from '@/lib/actions/auth';
+import { useSession } from 'next-auth/react';
 
 export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [notifMenuOpen, setNotifMenuOpen] = useState(false);
+    const { data: session } = useSession();
+
+    const userName = session?.user?.name || 'Admin';
+    const userEmail = session?.user?.email || 'admin@carepet.com';
+    const userInitial = userName.charAt(0).toUpperCase();
 
     const handleLogout = async () => {
         await signOutAdmin();
@@ -156,7 +162,7 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
                                     className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-700 transition-colors"
                                 >
                                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
-                                        A
+                                        {userInitial}
                                     </div>
                                     <ChevronDown size={16} className="text-gray-400" />
                                 </button>
@@ -166,8 +172,8 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
                                         <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
                                         <div className="absolute right-0 top-12 w-56 bg-gray-800 rounded-xl shadow-xl border border-gray-700 py-2 z-50">
                                             <div className="px-4 py-3 border-b border-gray-700">
-                                                <p className="font-semibold text-white">Admin</p>
-                                                <p className="text-sm text-gray-400">admin@carepet.com</p>
+                                                <p className="font-semibold text-white">{userName}</p>
+                                                <p className="text-sm text-gray-400">{userEmail}</p>
                                             </div>
                                             <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:bg-gray-700">
                                                 <Settings size={18} />
@@ -221,11 +227,11 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
                             <div className="pt-4 border-t border-gray-700">
                                 <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-indigo-500/10 to-purple-500/10">
                                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                                        A
+                                        {userInitial}
                                     </div>
                                     <div className="flex-1">
-                                        <p className="font-semibold text-white">Admin</p>
-                                        <p className="text-xs text-gray-400">admin@carepet.com</p>
+                                        <p className="font-semibold text-white">{userName}</p>
+                                        <p className="text-xs text-gray-400">{userEmail}</p>
                                     </div>
                                     <button
                                         onClick={handleLogout}
