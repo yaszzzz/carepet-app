@@ -10,7 +10,7 @@ interface AdminPetRowProps {
         id_hewan: string;
         nama_hewan: string;
         jenis: string;
-        umur: number;
+        usia: number;
         kebutuhan_khusus?: string | null;
         pengguna: {
             nama_pengguna: string;
@@ -49,7 +49,7 @@ export const AdminPetRow = ({ pet }: AdminPetRowProps) => {
                     </div>
                     <div>
                         <p className="font-medium text-white">{pet.nama_hewan}</p>
-                        <p className="text-xs text-gray-500">{pet.jenis} • {pet.umur} Tahun</p>
+                        <p className="text-xs text-gray-500">{pet.jenis} • {pet.usia} Tahun</p>
                     </div>
                 </div>
             </td>

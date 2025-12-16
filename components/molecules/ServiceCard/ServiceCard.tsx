@@ -23,6 +23,8 @@ export interface ServiceCardProps {
   bookingHref?: string;
 }
 
+import Link from 'next/link';
+
 const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
   ({
     title,
@@ -35,6 +37,7 @@ const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
     className,
     onBook,
     onLearnMore,
+    bookingHref,
     ...props
   }, ref) => {
 

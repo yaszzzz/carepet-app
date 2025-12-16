@@ -41,7 +41,7 @@ const HeroSection = () => {
                 Booking Sekarang
               </Link>
               <Link
-                href="/#services"
+                href="/login"
                 className="border-2 border-[#BBC863] text-white px-8 py-4 rounded-xl hover:bg-[#F0E491]/20 transition-all duration-300 font-semibold text-lg text-center"
               >
                 Lihat Layanan

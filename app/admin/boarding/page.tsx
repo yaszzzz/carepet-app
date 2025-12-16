@@ -13,14 +13,10 @@ export default async function AdminBoardingPage() {
     const bookings = await prisma.pemesanan.findMany({
         include: {
             hewan: {
-                select: {
+                select: { // Or include? Using select to pick specific fields
                     nama_hewan: true,
-                    jenis: true
-                }
-            },
-            hewan: {
-                include: {
-                    pengguna: {
+                    jenis: true,
+                    pengguna: { // Nested relation
                         select: {
                             nama_pengguna: true,
                             no_hp: true

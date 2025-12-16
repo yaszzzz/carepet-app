@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/atoms/Button/Button';
 import { H1, H2, H3, P, Lead } from '@/components/atoms/Typography';
@@ -164,12 +165,14 @@ const AboutSection = React.forwardRef<HTMLDivElement, AboutSectionProps>(
               Kami percaya setiap hewan layak mendapatkan perawatan terbaik dengan kasih sayang penuh.
             </Lead>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button
-                size="lg"
-                className="bg-[#658C58] text-white hover:bg-[#31694E] transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
-              >
-                Jadwalkan Konsultasi
-              </Button>
+              <Link href="/login">
+                <Button
+                  size="lg"
+                  className="bg-[#658C58] text-white hover:bg-[#31694E] transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
+                >
+                  Jadwalkan Konsultasi
+                </Button>
+              </Link>
               <Button
                 variant="outline"
                 size="lg"
@@ -316,20 +319,24 @@ const AboutSection = React.forwardRef<HTMLDivElement, AboutSectionProps>(
                 untuk pertama kalinya
               </P>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  className="border-white text-white hover:bg-white/10"
-                >
-                  Booking Sekarang
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-white text-white hover:bg-white/10"
-                >
-                  Hubungi Kami
-                </Button>
+                <Link href="/login">
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    className="border-white text-white hover:bg-white/10"
+                  >
+                    Booking Sekarang
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-white text-white hover:bg-white/10"
+                  >
+                    Hubungi Kami
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

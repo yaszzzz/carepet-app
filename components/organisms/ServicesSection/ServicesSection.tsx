@@ -29,19 +29,19 @@ export interface ServicesSectionProps {
 }
 
 const ServicesSection = React.forwardRef<HTMLDivElement, ServicesSectionProps>(
-  ({ 
-    className, 
+  ({
+    className,
     title = "Layanan Unggulan Kami",
     subtitle = "Berbagai layanan profesional untuk kebutuhan hewan kesayangan Anda",
     showFilter = true,
     limit,
     services: initialServices,
-    ...props 
+    ...props
   }, ref) => {
-    
+
     // State untuk filter
     const [activeCategory, setActiveCategory] = useState<string>('all');
-    
+
     // Data layanan default
     const defaultServices: Service[] = [
       {
@@ -130,17 +130,17 @@ const ServicesSection = React.forwardRef<HTMLDivElement, ServicesSectionProps>(
 
     // Gunakan services dari props atau default
     const services = initialServices || defaultServices;
-    
+
     // Filter services berdasarkan kategori
-    const filteredServices = activeCategory === 'all' 
-      ? services 
+    const filteredServices = activeCategory === 'all'
+      ? services
       : services.filter(service => service.category === activeCategory);
-    
+
     // Apply limit jika ada
-    const displayedServices = limit 
+    const displayedServices = limit
       ? filteredServices.slice(0, limit)
       : filteredServices;
-    
+
     // Categories untuk filter
     const categories = [
       { id: 'all', label: 'Semua Layanan', count: services.length },
@@ -169,13 +169,13 @@ const ServicesSection = React.forwardRef<HTMLDivElement, ServicesSectionProps>(
       >
         {/* Background dengan gradient - SAMA DENGAN SECTION LAIN */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#F0E491]/20 via-[#BBC863]/10 to-[#658C58]/5" id="services"></div>
-        
+
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#F0E491]/10 rounded-full -translate-y-32 translate-x-32"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#31694E]/5 rounded-full translate-y-48 -translate-x-48"></div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+
           {/* Header Section */}
           <div className="text-center max-w-3xl mx-auto mb-12">
             <div className="inline-block mb-4">
@@ -183,11 +183,11 @@ const ServicesSection = React.forwardRef<HTMLDivElement, ServicesSectionProps>(
                 🐾 Layanan Profesional
               </Badge>
             </div>
-            
+
             <H1 className="mb-4">
               <span className="text-[#31694E]">{title}</span>
             </H1>
-            
+
             <Lead className="text-gray-200 mb-8">
               {subtitle}
             </Lead>
@@ -233,6 +233,7 @@ const ServicesSection = React.forwardRef<HTMLDivElement, ServicesSectionProps>(
                 category={service.category}
                 icon={service.icon}
                 featured={service.featured}
+                bookingHref="/login"
                 onBook={() => handleBook(service.title)}
                 onLearnMore={() => handleLearnMore(service)}
               />
@@ -268,7 +269,7 @@ const ServicesSection = React.forwardRef<HTMLDivElement, ServicesSectionProps>(
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-[#BBC863]">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-xl bg-[#BBC863]/20">
@@ -280,7 +281,7 @@ const ServicesSection = React.forwardRef<HTMLDivElement, ServicesSectionProps>(
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-[#658C58]">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-xl bg-[#658C58]/20">
@@ -295,7 +296,7 @@ const ServicesSection = React.forwardRef<HTMLDivElement, ServicesSectionProps>(
           </div>
 
           {/* CTA Section */}
-       
+
         </div>
       </section>
     );

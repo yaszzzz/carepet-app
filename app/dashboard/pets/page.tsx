@@ -47,6 +47,7 @@ export default async function PetsPage() {
                     {pets.map((pet) => (
                         <PetCard
                             key={pet.id_hewan}
+                            id={pet.id_hewan}
                             name={pet.nama_hewan}
                             type={pet.jenis}
                             age={pet.usia}
