@@ -31,8 +31,8 @@ export default async function HistoryPage() {
     return (
         <DashboardLayout>
             <div className="mb-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Riwayat Pemesanan</h1>
-                <p className="text-gray-500 mt-1">Daftar riwayat penitipan dan layanan hewan Anda.</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-200">Riwayat Pemesanan</h1>
+                <p className="text-gray-100 mt-1">Daftar riwayat penitipan dan layanan hewan Anda.</p>
             </div>
 
             {bookings.length === 0 ? (
