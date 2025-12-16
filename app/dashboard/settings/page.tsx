@@ -1,5 +1,3 @@
-'use client';
-
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { DashboardLayout } from '@/components/templates/DashboardLayout/DashboardLayout';
