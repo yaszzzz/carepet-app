@@ -1,18 +1,18 @@
 'use client';
 
-import { History, ChevronRight } from 'lucide-react';
+import { History as HistoryIcon, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/atoms/Card/Card';
 import Link from 'next/link';
 
 export const BoardingHistoryCard = () => {
     return (
-        <Link href="/dashboard/boarding-history">
+        <Link href="/dashboard/history">
             <Card hover shadow="lg" className="h-full group cursor-pointer">
                 <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <div className="p-4 rounded-2xl bg-gradient-to-br from-[#BBC863] to-[#658C58] text-white shadow-lg group-hover:scale-105 transition-transform">
-                                <History size={28} />
+                                <HistoryIcon size={28} />
                             </div>
                             <div>
                                 <h3 className="text-lg font-bold text-gray-900">Riwayat Penitipan</h3>

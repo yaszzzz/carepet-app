@@ -23,21 +23,26 @@ interface DashboardLayoutProps {
 
 const menuItems = [
     { icon: Home, label: 'Dashboard', href: '/dashboard' },
-    { icon: PawPrint, label: 'Hewan Saya', href: '/dashboard#pets' },
-    { icon: Clock, label: 'Status', href: '/dashboard#status' },
-    { icon: History, label: 'Riwayat', href: '/dashboard#boarding-history' },
-    { icon: ShoppingCart, label: 'Layanan', href: '/dashboard#services' },
-    { icon: CreditCard, label: 'Pembayaran', href: '/dashboard#payments' },
-    { icon: Settings, label: 'Pengaturan', href: '/dashboard#settings' },
+    { icon: PawPrint, label: 'Hewan Saya', href: '/dashboard/pets' },
+    { icon: Clock, label: 'Status', href: '/dashboard/status' },
+    { icon: History, label: 'Riwayat', href: '/dashboard/history' },
+    { icon: ShoppingCart, label: 'Layanan', href: '/dashboard/services' },
+    { icon: CreditCard, label: 'Pembayaran', href: '/dashboard/payments' },
+    { icon: Settings, label: 'Pengaturan', href: '/dashboard/settings' },
 ];
 
 
 import { signOutUser } from '@/lib/actions/auth';
+import { useSession } from 'next-auth/react';
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+    const { data: session } = useSession();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [notifMenuOpen, setNotifMenuOpen] = useState(false);
+
+    const userEmail = session?.user?.email || 'user@email.com';
+    const userName = session?.user?.name || 'User';
 
     const handleLogout = async () => {
         await signOutUser();
@@ -154,7 +159,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                                     className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
                                 >
                                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#658C58] to-[#31694E] flex items-center justify-center text-white text-sm font-bold">
-                                        A
+                                        {userName.charAt(0).toUpperCase()}
                                     </div>
                                     <ChevronDown size={16} className="text-gray-500" />
                                 </button>
@@ -165,7 +170,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                                         <div className="absolute right-0 top-12 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
                                             <div className="px-4 py-3 border-b border-gray-100">
                                                 <p className="font-semibold text-gray-800">Akun Saya</p>
-                                                <p className="text-sm text-gray-500">user@email.com</p>
+                                                <p className="text-sm text-gray-500 truncate" title={userEmail}>{userEmail}</p>
                                             </div>
                                             <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50">
                                                 <Settings size={18} />
@@ -234,11 +239,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                             <div className="pt-4 border-t border-gray-100">
                                 <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-[#F0E491]/20 to-[#BBC863]/10">
                                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#658C58] to-[#31694E] flex items-center justify-center text-white font-bold">
-                                        A
+                                        {userName.charAt(0).toUpperCase()}
                                     </div>
                                     <div className="flex-1">
                                         <p className="font-semibold text-gray-800">Akun Saya</p>
-                                        <p className="text-xs text-gray-500">user@email.com</p>
+                                        <p className="text-xs text-gray-500 truncate" title={userEmail}>{userEmail}</p>
                                     </div>
                                     <button
                                         onClick={handleLogout}
