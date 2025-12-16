@@ -7,13 +7,13 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
-export default async function BookingPage({ params }: { params: { id: string } }) {
+export default async function BookingPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await auth();
     if (!session?.user?.id) {
         redirect('/login');
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     const [service, pets] = await Promise.all([
         prisma.layanan.findUnique({

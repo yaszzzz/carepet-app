@@ -51,8 +51,9 @@ export async function createBooking(formData: FormData) {
                 id_layanan,
                 tgl_masuk: start,
                 tgl_keluar: end,
-                status: 'Menunggu'
-            }
+                status: 'Menunggu',
+                catatan: formData.get('catatan') as string || null
+            } as any
         });
 
         revalidatePath('/dashboard/history');

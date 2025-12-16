@@ -17,6 +17,31 @@ export const BookingForm = ({ service, pets }: BookingFormProps) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
 
+    // Form states for live update
+    const [selectedPetId, setSelectedPetId] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [notes, setNotes] = useState('');
+
+    // Derived state
+    const selectedPet = pets.find(p => p.id_hewan === selectedPetId);
+
+    let duration = 0;
+    let totalPrice = 0;
+
+    if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const diffTime = Math.abs(end.getTime() - start.getTime());
+        duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        // If same day, maybe 1 day? Or 0? Usually 1 day min or per night.
+        // If start == end, duration is 0, let's assume min 1 day charge or clarify logic.
+        // Assuming overnight, so 0 nights if same day. But service might be per day.
+        // Let's assume input is Check-in/Check-out dates.
+        if (duration === 0) duration = 1; // Minimum 1 day charge
+        totalPrice = duration * service.harga;
+    }
+
     const handleSubmit = async (formData: FormData) => {
         setIsLoading(true);
         setError('');
@@ -33,82 +58,137 @@ export const BookingForm = ({ service, pets }: BookingFormProps) => {
     };
 
     return (
-        <form action={handleSubmit} className="space-y-6">
+        <form action={handleSubmit}>
             <input type="hidden" name="id_layanan" value={service.id_layanan} />
 
             {error && (
-                <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm flex items-center gap-2">
+                <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg text-sm flex items-center gap-2">
                     <AlertCircle size={16} />
                     {error}
                 </div>
             )}
 
-            <div className="space-y-4">
-                <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">Pilih Hewan</label>
-                    <select
-                        name="id_hewan"
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white"
-                        required
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Left Column: Form Inputs */}
+                <div className="space-y-6">
+                    <div className="space-y-4">
+                        <div className="space-y-1">
+                            <label className="text-sm font-medium text-gray-700">Pilih Hewan</label>
+                            <select
+                                name="id_hewan"
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white"
+                                required
+                                value={selectedPetId}
+                                onChange={(e) => setSelectedPetId(e.target.value)}
+                            >
+                                <option value="">-- pilih hewan --</option>
+                                {pets.map(pet => (
+                                    <option key={pet.id_hewan} value={pet.id_hewan}>
+                                        {pet.nama_hewan} ({pet.jenis})
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Layanan is Read-Only/Hidden/Implicit as requested */}
+                        <div className="space-y-1">
+                            <label className="text-sm font-medium text-gray-700">Layanan</label>
+                            <div className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-600">
+                                {service.nama_layanan}
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-sm font-medium text-gray-700">Tanggal Masuk</label>
+                            <input
+                                type="date"
+                                name="tgl_masuk"
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                required
+                                min={new Date().toISOString().split('T')[0]}
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-sm font-medium text-gray-700">Tanggal Keluar</label>
+                            <input
+                                type="date"
+                                name="tgl_keluar"
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                required
+                                min={startDate || new Date().toISOString().split('T')[0]}
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-sm font-medium text-gray-700">Kebutuhan Khusus</label>
+                            <textarea
+                                name="catatan"
+                                rows={4}
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                placeholder="Contoh: alergi makanan, harus makan wetfood, dll..."
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Column: Confirmation Summary */}
+                <div className="lg:pl-8 lg:border-l lg:border-gray-200">
+                    <h3 className="font-bold text-xl text-gray-900 mb-6">Detail Pesanan</h3>
+
+                    <div className="bg-gray-50 rounded-xl p-6 space-y-4 mb-6 border border-gray-200">
+                        <div className="space-y-3 text-sm">
+                            <div className="flex justify-between">
+                                <span className="font-medium text-gray-900">Hewan:</span>
+                                <span className="text-gray-600">{selectedPet ? `${selectedPet.nama_hewan} (${selectedPet.jenis})` : '-'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium text-gray-900">Layanan:</span>
+                                <span className="text-gray-600">{service.nama_layanan}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium text-gray-900">Tanggal Masuk:</span>
+                                <span className="text-gray-600">{startDate || '-'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium text-gray-900">Tanggal Keluar:</span>
+                                <span className="text-gray-600">{endDate || '-'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium text-gray-900">Durasi:</span>
+                                <span className="text-gray-600">{duration > 0 ? `${duration} Hari` : '-'}</span>
+                            </div>
+                            <div className="pt-2 border-t border-gray-200">
+                                <span className="font-medium text-gray-900 block mb-1">Kebutuhan Khusus:</span>
+                                <p className="text-gray-600 italic text-xs">{notes || 'Tidak ada'}</p>
+                            </div>
+                        </div>
+
+                        <div className="pt-4 border-t-2 border-gray-200">
+                            <div className="flex justify-between items-center">
+                                <span className="font-bold text-lg text-gray-900">Total Bayar:</span>
+                                <span className="font-bold text-xl text-[#31694E]">
+                                    Rp {totalPrice.toLocaleString('id-ID')}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Button
+                        type="submit"
+                        className="w-full bg-black hover:bg-gray-800 text-white py-6 rounded-lg text-lg font-medium"
+                        isLoading={isLoading}
+                        disabled={isLoading || !selectedPetId || !startDate || !endDate}
                     >
-                        <option value="">Pilih Hewan Peliharaan</option>
-                        {pets.map(pet => (
-                            <option key={pet.id_hewan} value={pet.id_hewan}>
-                                {pet.nama_hewan} ({pet.jenis})
-                            </option>
-                        ))}
-                    </select>
+                        Lanjut ke Pembayaran
+                    </Button>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input
-                        label="Tanggal Masuk"
-                        name="tgl_masuk"
-                        type="date"
-                        required
-                        min={new Date().toISOString().split('T')[0]}
-                    />
-                    <Input
-                        label="Tanggal Keluar"
-                        name="tgl_keluar"
-                        type="date"
-                        required
-                        min={new Date().toISOString().split('T')[0]}
-                    />
-                </div>
-
-                <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-                    <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Layanan</span>
-                        <span className="font-medium text-gray-900">{service.nama_layanan}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Harga per Hari</span>
-                        <span className="font-medium text-gray-900">Rp {service.harga.toLocaleString('id-ID')}</span>
-                    </div>
-                    <div className="pt-2 border-t border-gray-200 mt-2">
-                        <p className="text-xs text-gray-500 italic">*Total biaya akan dikonfirmasi setelah pemesanan disetujui.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div className="flex gap-4 pt-4">
-                <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => router.back()}
-                    disabled={isLoading}
-                >
-                    Batal
-                </Button>
-                <Button
-                    type="submit"
-                    className="w-full bg-[#31694E] hover:bg-[#26533d] text-white"
-                    isLoading={isLoading}
-                >
-                    Konfirmasi Booking
-                </Button>
             </div>
         </form>
     );

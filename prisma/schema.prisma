@@ -83,6 +83,7 @@ model Pemesanan {
   tgl_masuk    DateTime @db.Date
   tgl_keluar   DateTime @db.Date
   status       String   @db.VarChar(20)
+  catatan      String?  @db.VarChar(255)
   
   // Relasi many-to-one dengan Hewan
   hewan        Hewan      @relation(fields: [id_hewan], references: [id_hewan], onDelete: Cascade)
