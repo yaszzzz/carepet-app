@@ -12,8 +12,13 @@ interface BookingFormProps {
     pets: any[];
 }
 
+import { PaymentInterface } from './PaymentInterface';
+
 export const BookingForm = ({ service, pets }: BookingFormProps) => {
     const router = useRouter();
+    const [step, setStep] = useState<'form' | 'payment'>('form');
+    const [createdBooking, setCreatedBooking] = useState<any>(null);
+
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -34,11 +39,7 @@ export const BookingForm = ({ service, pets }: BookingFormProps) => {
         const end = new Date(endDate);
         const diffTime = Math.abs(end.getTime() - start.getTime());
         duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        // If same day, maybe 1 day? Or 0? Usually 1 day min or per night.
-        // If start == end, duration is 0, let's assume min 1 day charge or clarify logic.
-        // Assuming overnight, so 0 nights if same day. But service might be per day.
-        // Let's assume input is Check-in/Check-out dates.
-        if (duration === 0) duration = 1; // Minimum 1 day charge
+        if (duration === 0) duration = 1;
         totalPrice = duration * service.harga;
     }
 
@@ -48,14 +49,31 @@ export const BookingForm = ({ service, pets }: BookingFormProps) => {
 
         const result = await createBooking(formData);
 
-        if (result?.error) {
-            setError(result.error);
+        if (result.success && result.booking) {
+            // Move to Payment Step
+            setCreatedBooking(result.booking);
+            setStep('payment');
             setIsLoading(false);
         } else {
-            router.push('/dashboard/status');
-            router.refresh();
+            setError(result.error || 'Gagal membuat booking');
+            setIsLoading(false);
         }
     };
+
+    if (step === 'payment' && createdBooking) {
+        return (
+            <div className="animate-in fade-in slide-in-from-right-8 duration-500">
+                <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-gray-800">Pembayaran</h2>
+                    <p className="text-gray-500">Selesaikan pembayaran untuk memproses booking Anda.</p>
+                </div>
+                <PaymentInterface
+                    booking={createdBooking}
+                    totalAmount={totalPrice}
+                />
+            </div>
+        );
+    }
 
     return (
         <form action={handleSubmit}>
@@ -76,7 +94,7 @@ export const BookingForm = ({ service, pets }: BookingFormProps) => {
                             <label className="text-sm font-medium text-gray-700">Pilih Hewan</label>
                             <select
                                 name="id_hewan"
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white"
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white text-gray-600"
                                 required
                                 value={selectedPetId}
                                 onChange={(e) => setSelectedPetId(e.target.value)}
@@ -103,7 +121,7 @@ export const BookingForm = ({ service, pets }: BookingFormProps) => {
                             <input
                                 type="date"
                                 name="tgl_masuk"
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-gray-600"
                                 required
                                 min={new Date().toISOString().split('T')[0]}
                                 value={startDate}
@@ -116,7 +134,7 @@ export const BookingForm = ({ service, pets }: BookingFormProps) => {
                             <input
                                 type="date"
                                 name="tgl_keluar"
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-gray-600"
                                 required
                                 min={startDate || new Date().toISOString().split('T')[0]}
                                 value={endDate}
@@ -129,7 +147,7 @@ export const BookingForm = ({ service, pets }: BookingFormProps) => {
                             <textarea
                                 name="catatan"
                                 rows={4}
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-gray-600 "
                                 placeholder="Contoh: alergi makanan, harus makan wetfood, dll..."
                                 value={notes}
                                 onChange={(e) => setNotes(e.target.value)}
@@ -182,7 +200,7 @@ export const BookingForm = ({ service, pets }: BookingFormProps) => {
 
                     <Button
                         type="submit"
-                        className="w-full bg-black hover:bg-gray-800 text-white py-6 rounded-lg text-lg font-medium"
+                        className="w-full bg-black hover:bg-black/80 text-white py-6 rounded-lg text-lg font-medium"
                         isLoading={isLoading}
                         disabled={isLoading || !selectedPetId || !startDate || !endDate}
                     >

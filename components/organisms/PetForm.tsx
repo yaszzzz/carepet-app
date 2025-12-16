@@ -51,7 +51,7 @@ export const PetForm = () => {
                         <label className="text-sm font-medium text-gray-700">Jenis Hewan</label>
                         <select
                             name="jenis"
-                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white"
+                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white text-gray-700   "
                             required
                         >
                             <option value="">Pilih Jenis</option>
@@ -78,7 +78,7 @@ export const PetForm = () => {
                     <textarea
                         name="kebutuhan_khusus"
                         rows={3}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-gray-700 "
                         placeholder="Contoh: Alergi makanan tertentu, butuh obat harian..."
                     />
                 </div>

@@ -72,7 +72,7 @@ export const AccountSettingsForm = ({ user }: { user: any }) => {
                             Klik gambar untuk mengubah.<br />
                             Format: JPG, PNG. Kl. 2MB.
                         </p>
-                        <Button variant="outline" size="sm" className="w-full">
+                        <Button variant="outline" size="sm" className="w-full bg-[red] text-white hover:bg-[red]/80">
                             Hapus Foto
                         </Button>
                     </CardContent>
@@ -129,18 +129,18 @@ export const AccountSettingsForm = ({ user }: { user: any }) => {
                             <div className="space-y-1">
                                 <label className="text-sm font-medium text-gray-700">Alamat Lengkap</label>
                                 <div className="relative">
-                                    <MapPin className="absolute left-3 top-3 text-gray-400" size={18} />
+                                    <MapPin className="absolute left-3 top-3 text-gray-700" size={18} />
                                     <textarea
                                         name="alamat"
                                         defaultValue={user.alamat || ''} // Handle potentially missing data
-                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 min-h-[100px]"
+                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 min-h-[100px] text-gray-700 placeholder:text-gray-400"
                                         placeholder="Jl. Contoh No. 123, Kota..."
                                     />
                                 </div>
                             </div>
 
                             <div className="pt-2 flex justify-end">
-                                <Button type="submit" isLoading={isLoadingProfile} className="bg-indigo-600 text-white hover:bg-indigo-700">
+                                <Button type="submit" isLoading={isLoadingProfile} className="bg-[#658C58] text-white hover:bg-[#658C58]/80">
                                     <Save size={18} className="mr-2" />
                                     Simpan Perubahan
                                 </Button>
@@ -193,7 +193,7 @@ export const AccountSettingsForm = ({ user }: { user: any }) => {
                             </div>
 
                             <div className="pt-2 flex justify-end">
-                                <Button type="submit" variant="outline" isLoading={isLoadingPassword}>
+                                <Button type="submit" variant="outline" isLoading={isLoadingPassword} className="bg-[#658C58] text-white hover:bg-[#658C58]/80"   >
                                     Update Password
                                 </Button>
                             </div>
