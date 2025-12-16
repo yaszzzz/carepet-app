@@ -233,9 +233,11 @@ const ServicesSection = React.forwardRef<HTMLDivElement, ServicesSectionProps>(
                 category={service.category}
                 icon={service.icon}
                 featured={service.featured}
+                details={service.details}
                 bookingHref="/login"
                 onBook={() => handleBook(service.title)}
-                onLearnMore={() => handleLearnMore(service)}
+                // onLearnMore is optional now, handled by internal state toggle, but we can keep it for analytics or side effects
+                onLearnMore={() => console.log(`Viewing details for ${service.title}`)}
               />
             ))}
           </div>
