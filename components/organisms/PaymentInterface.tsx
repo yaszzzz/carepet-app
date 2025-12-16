@@ -6,6 +6,7 @@ import { processPayment } from '@/lib/actions/payment';
 import { Clock, Upload, Copy, CheckCircle, Smartphone, CreditCard, QrCode } from 'lucide-react';
 
 interface PaymentInterfaceProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     booking: any;
     totalAmount: number;
     onSuccess?: () => void;

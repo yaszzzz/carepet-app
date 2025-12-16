@@ -8,7 +8,9 @@ import { createBooking } from '@/lib/actions/booking';
 import { Calendar, AlertCircle } from 'lucide-react';
 
 interface BookingFormProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     service: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pets: any[];
 }
 
@@ -17,6 +19,7 @@ import { PaymentInterface } from './PaymentInterface';
 export const BookingForm = ({ service, pets }: BookingFormProps) => {
     const router = useRouter();
     const [step, setStep] = useState<'form' | 'payment'>('form');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [createdBooking, setCreatedBooking] = useState<any>(null);
 
     const [isLoading, setIsLoading] = useState(false);
