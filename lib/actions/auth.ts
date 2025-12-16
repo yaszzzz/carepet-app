@@ -54,8 +54,22 @@ export async function registerUser(data: {
         });
 
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error('Registration error:', error);
+
+        // Handle Prisma unique constraint error
+        if (error.code === 'P2002') {
+            const target = error.meta?.target;
+            if (Array.isArray(target) && target.includes('email')) {
+                return { error: 'Email sudah terdaftar' };
+            }
+            if (Array.isArray(target) && target.includes('id_pengguna')) {
+                // If ID collision, we could retry (simple retry logic)
+                // For now, return specific message or try one more time
+                return { error: 'Terjadi kesalahan sistem (ID Collision). Silakan coba lagi.' };
+            }
+        }
+
         return { error: 'Terjadi kesalahan saat mendaftar' };
     }
 }
