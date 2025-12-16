@@ -1,22 +1,22 @@
-import { ReactNode } from 'react';
-import { Button } from '@/components/atoms/Button/Button';
+import React from 'react';
 
-interface SocialAuthButtonProps {
-    icon: ReactNode;
+export interface SocialAuthButtonProps {
+    icon: React.ReactNode;
     label: string;
-    onClick?: () => void;
+    onClick: () => void;
+    disabled?: boolean;
 }
 
-export const SocialAuthButton = ({ icon, label, onClick }: SocialAuthButtonProps) => {
+export const SocialAuthButton = ({ icon, label, onClick, disabled }: SocialAuthButtonProps) => {
     return (
-        <Button
-            variant="outline"
-            className="w-full flex items-center justify-center gap-2 py-3 border-gray-300 text-gray-700 hover:bg-gray-50"
-            onClick={onClick}
+        <button
             type="button"
+            onClick={onClick}
+            disabled={disabled}
+            className="flex items-center justify-center gap-2 w-full py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-            {icon}
-            <span>{label}</span>
-        </Button>
+            <span className="text-gray-600">{icon}</span>
+            <span className="text-sm font-medium text-gray-700">{label}</span>
+        </button>
     );
 };

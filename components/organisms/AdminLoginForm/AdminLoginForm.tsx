@@ -3,42 +3,63 @@
 import { useState } from 'react';
 import { Input } from '@/components/atoms/Input/Input';
 import { Button } from '@/components/atoms/Button/Button';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { signInAdmin } from '@/lib/actions/auth';
 
 export const AdminLoginForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsLoading(true);
+        setError(null);
 
-        // Simulate API call
-        setTimeout(() => {
-            console.log('Admin login submitted');
+        const formData = new FormData(e.currentTarget);
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+
+        try {
+            const result = await signInAdmin(email, password);
+            if (result?.error) {
+                setError(result.error);
+            }
+        } catch (err) {
+            setError('An unexpected error occurred');
+        } finally {
             setIsLoading(false);
-        }, 1500);
+        }
     };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+                <div className="flex items-center gap-2 p-4 text-sm text-red-400 bg-red-900/20 border border-red-900/50 rounded-xl">
+                    <AlertCircle size={16} />
+                    <span>{error}</span>
+                </div>
+            )}
+
             {/* Email Input */}
             <div className="space-y-4">
                 <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Email Admin
+                        Username / Email
                     </label>
                     <div className="relative">
                         <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
                             <Mail size={18} />
                         </div>
                         <input
-                            type="email"
-                            placeholder="admin@carepet.com"
+                            name="email"
+                            type="text"
+                            placeholder="username"
                             required
-                            className="w-full px-4 py-3 pl-10 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                            disabled={isLoading}
+                            className="w-full px-4 py-3 pl-10 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                     </div>
                 </div>
@@ -53,15 +74,18 @@ export const AdminLoginForm = () => {
                             <Lock size={18} />
                         </div>
                         <input
+                            name="password"
                             type={showPassword ? 'text' : 'password'}
                             placeholder="••••••••"
                             required
-                            className="w-full px-4 py-3 pl-10 pr-10 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                            disabled={isLoading}
+                            className="w-full px-4 py-3 pl-10 pr-10 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors"
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors focus:outline-none"
+                            tabIndex={-1}
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>

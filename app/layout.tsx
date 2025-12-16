@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: 'Layanan perawatan hewan peliharaan terpercaya',
 };
 
+import { SessionProvider } from 'next-auth/react';
+
 export default async function RootLayout({
   children,
 }: {
@@ -26,9 +28,11 @@ export default async function RootLayout({
   return (
     <html lang="id">
       <body className={`${inter.className} bg-gray-900`}>
-        {!hideNavbar && <Navbar />}
-        <main className={!hideNavbar ? "min-h-screen pt-16" : ""}>{children}</main>
-        {!hideNavbar && <Footer />}
+        <SessionProvider>
+          {!hideNavbar && <Navbar />}
+          <main className={!hideNavbar ? "min-h-screen pt-16" : ""}>{children}</main>
+          {!hideNavbar && <Footer />}
+        </SessionProvider>
       </body>
     </html>
   );
