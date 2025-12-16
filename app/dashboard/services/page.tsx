@@ -20,11 +20,11 @@ export default async function ServicesPage() {
                         title={service.nama_layanan}
                         price={`Rp ${service.harga.toLocaleString('id-ID')}`}
                         description={service.deskripsi}
-                        duration="1 Hari" // Default duration
-                        category="other" // Default category
+                        duration="1 Hari" // Default
+                        category="other" // Default since not in DB
+                        details={[]} // Default since not in DB
+                        featured={false} // Default
                         bookingHref={`/dashboard/services/book/${service.id_layanan}`}
-                        onBook={() => { }} // Placeholder
-                        onLearnMore={() => { }} // Placeholder
                     />
                 ))}
             </div>
