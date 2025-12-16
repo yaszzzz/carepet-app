@@ -1,7 +1,7 @@
 'use client';
 
 import { DashboardLayout } from '@/components/templates/DashboardLayout/DashboardLayout';
-import { AccountSettingsCard } from '@/components/molecules/DashboardCards';
+import { AccountSettingsForm } from '@/components/organisms/AccountSettingsForm';
 import { Settings } from 'lucide-react';
 
 export default function ClientSettingsPage() {
@@ -13,14 +13,14 @@ export default function ClientSettingsPage() {
                         <Settings size={24} className="text-[#658C58]" />
                     </div>
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Pengaturan Akun</h1>
-                        <p className="text-gray-500 text-sm sm:text-base">Kelola informasi profil dan keamanan akun Anda.</p>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-200">Pengaturan Akun</h1>
+                        <p className="text-gray-100 text-sm sm:text-base">Kelola informasi profil dan keamanan akun Anda.</p>
                     </div>
                 </div>
             </div>
 
             <div className="max-w-4xl mx-auto">
-                <AccountSettingsCard />
+                <AccountSettingsForm />
             </div>
         </DashboardLayout>
     );
