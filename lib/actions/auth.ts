@@ -17,61 +17,88 @@ export async function registerUser(data: {
     no_hp: string;
     alamat: string;
 }) {
-    try {
-        // Check if email already exists
-        const existingUser = await prisma.pengguna.findUnique({
-            where: { email: data.email },
-        });
+    // Hash password once
+    const hashedPassword = await hashPassword(data.password);
 
-        if (existingUser) {
-            return { error: 'Email sudah terdaftar' };
-        }
+    // Max retries for ID generation
+    const MAX_RETRIES = 3;
+    let attempt = 0;
 
-        // Generate unique ID (format: PG0001, PG0002, etc.)
-        const lastUser = await prisma.pengguna.findFirst({
-            orderBy: { id_pengguna: 'desc' },
-        });
+    while (attempt < MAX_RETRIES) {
+        try {
+            // Check if email already exists (fail fast)
+            const existingUser = await prisma.pengguna.findUnique({
+                where: { email: data.email },
+            });
 
-        let newId = 'PG0001';
-        if (lastUser) {
-            const lastNumber = parseInt(lastUser.id_pengguna.replace('PG', ''));
-            newId = `PG${String(lastNumber + 1).padStart(4, '0')}`;
-        }
-
-        // Hash password
-        const hashedPassword = await hashPassword(data.password);
-
-        // Create user
-        await prisma.pengguna.create({
-            data: {
-                id_pengguna: newId,
-                nama_pengguna: data.nama,
-                email: data.email,
-                password: hashedPassword,
-                no_hp: data.no_hp,
-                alamat: data.alamat,
-            },
-        });
-
-        return { success: true };
-    } catch (error: any) {
-        console.error('Registration error:', error);
-
-        // Handle Prisma unique constraint error
-        if (error.code === 'P2002') {
-            const target = error.meta?.target;
-            if (Array.isArray(target) && target.includes('email')) {
+            if (existingUser) {
                 return { error: 'Email sudah terdaftar' };
             }
-            if (Array.isArray(target) && target.includes('id_pengguna')) {
-                // If ID collision, we could retry (simple retry logic)
-                // For now, return specific message or try one more time
-                return { error: 'Terjadi kesalahan sistem (ID Collision). Silakan coba lagi.' };
-            }
-        }
 
-        return { error: 'Terjadi kesalahan saat mendaftar' };
+            // Generate unique ID (format: PG0001, PG0002, etc.)
+            // Only look for IDs that follow the standard format 'PG' to avoid parsing errors
+            // from legacy or non-standard IDs (e.g. 'USER1').
+            const lastUser = await prisma.pengguna.findFirst({
+                where: {
+                    id_pengguna: {
+                        startsWith: 'PG'
+                    }
+                },
+                orderBy: { id_pengguna: 'desc' },
+            });
+
+            let newId = 'PG0001';
+            if (lastUser) {
+                const lastNumber = parseInt(lastUser.id_pengguna.replace('PG', ''));
+                if (!isNaN(lastNumber)) {
+                    newId = `PG${String(lastNumber + 1).padStart(4, '0')}`;
+                }
+            }
+
+            // Create user
+            await prisma.pengguna.create({
+                data: {
+                    id_pengguna: newId,
+                    nama_pengguna: data.nama,
+                    email: data.email,
+                    password: hashedPassword,
+                    no_hp: data.no_hp,
+                    alamat: data.alamat,
+                },
+            });
+
+            return { success: true };
+
+        } catch (error: any) {
+            // Handle Prisma known request errors
+            if (error.code === 'P2002') {
+                const target = error.meta?.target;
+
+                // Check if error is due to email (no retry needed)
+                if (
+                    (Array.isArray(target) && target.includes('email')) ||
+                    (typeof target === 'string' && target.includes('email'))
+                ) {
+                    return { error: 'Email sudah terdaftar' };
+                }
+
+                // Check if error is due to id_pengguna (retry needed)
+                if (
+                    (Array.isArray(target) && target.includes('id_pengguna')) ||
+                    (typeof target === 'string' && target.includes('id_pengguna'))
+                ) {
+                    attempt++;
+                    console.log(`ID Collision detected, retrying (Attempt ${attempt}/${MAX_RETRIES})...`);
+                    continue; // Retry the loop
+                }
+            }
+
+            console.error('Registration error:', error);
+            return { error: 'Terjadi kesalahan saat mendaftar' };
+        }
     }
+
+    return { error: 'Gagal membuat ID unik. Silakan coba lagi.' };
 }
 
 /**
