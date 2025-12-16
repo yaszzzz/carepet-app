@@ -32,6 +32,7 @@ model Pengguna {
   alamat        String   @db.VarChar(80)
   email         String   @unique @db.VarChar(40)
   password      String   @db.VarChar(255) // For authentication
+  foto          String?  @db.VarChar(255) // Profile picture URL from Google/Facebook
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   

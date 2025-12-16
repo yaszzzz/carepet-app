@@ -165,7 +165,18 @@ export async function signOutUser() {
 /**
  * Sign out the current admin
  */
+/**
+ * Sign out the current admin
+ */
 export async function signOutAdmin() {
     await nextAuthSignOut({ redirectTo: '/admin/login' });
+}
+
+/**
+ * Trigger Social Sign In
+ * @param provider - 'google' or 'facebook'
+ */
+export async function socialSignIn(provider: 'google' | 'facebook') {
+    await nextAuthSignIn(provider, { redirectTo: '/dashboard' });
 }
 

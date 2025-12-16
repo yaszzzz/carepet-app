@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { signInUser } from '@/lib/actions/auth';
+import { signInUser, socialSignIn } from '@/lib/actions/auth';
 
 import { Input } from '@/components/atoms/Input/Input';
 import { Button } from '@/components/atoms/Button/Button';
@@ -90,13 +90,13 @@ export const LoginForm = () => {
                 <SocialAuthButton
                     icon={<Chrome size={18} />}
                     label="Google"
-                    onClick={() => console.log('Google login')}
+                    onClick={() => socialSignIn('google')}
                     disabled={isLoading}
                 />
                 <SocialAuthButton
                     icon={<Facebook size={18} />}
                     label="Facebook"
-                    onClick={() => console.log('Facebook login')}
+                    onClick={() => socialSignIn('facebook')}
                     disabled={isLoading}
                 />
             </div>

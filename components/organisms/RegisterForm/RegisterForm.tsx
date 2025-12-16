@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { registerUser } from '@/lib/actions/auth';
+import { registerUser, socialSignIn } from '@/lib/actions/auth';
 
 import { Input } from '@/components/atoms/Input/Input';
 import { Button } from '@/components/atoms/Button/Button';
@@ -144,13 +144,13 @@ export const RegisterForm = () => {
                 <SocialAuthButton
                     icon={<Chrome size={18} />}
                     label="Google"
-                    onClick={() => console.log('Google signup')}
+                    onClick={() => socialSignIn('google')}
                     disabled={isLoading}
                 />
                 <SocialAuthButton
                     icon={<Facebook size={18} />}
                     label="Facebook"
-                    onClick={() => console.log('Facebook signup')}
+                    onClick={() => socialSignIn('facebook')}
                     disabled={isLoading}
                 />
             </div>
