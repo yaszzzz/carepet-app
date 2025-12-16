@@ -9,6 +9,7 @@ import { AdminPetRow } from '@/components/molecules/AdminPetRow';
 export default async function AdminPetsPage() {
     const session = await auth();
     // In a real app, you'd check for admin role here specifically
+    // Ensure only admins can access this page
     if (!session?.user) {
         redirect('/admin/login');
     }
