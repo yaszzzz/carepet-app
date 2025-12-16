@@ -6,8 +6,8 @@ export default function NotFound() {
         <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4 text-center dark:bg-neutral-950">
             <div className="space-y-6">
                 {/* Illustration Placeholder - Using CSS shapes/Icon for now */}
-                <div className="mx-auto flex h-40 w-40 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-900/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-20 h-20 text-indigo-500 dark:text-indigo-400">
+                <div className="mx-auto flex h-40 w-40 items-center justify-center rounded-full bg-[#658C58]/10 dark:bg-[#658C58]/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-20 h-20 text-[#658C58] dark:text-[#658C58]">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
                     </svg>
                 </div>
@@ -27,7 +27,7 @@ export default function NotFound() {
                 <div className="flex items-center justify-center gap-4">
                     <Link
                         href="/dashboard"
-                        className="rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-500 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        className="rounded-xl bg-[#658C58] px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#658C58]/90 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#658C58]"
                     >
                         Go to Dashboard
                     </Link>
