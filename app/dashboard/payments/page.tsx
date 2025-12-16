@@ -36,8 +36,8 @@ export default async function PaymentsPage() {
     return (
         <DashboardLayout>
             <div className="mb-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Riwayat Pembayaran</h1>
-                <p className="text-gray-500 mt-1">Daftar transaksi pembayaran layanan Anda.</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-200">Riwayat Pembayaran</h1>
+                <p className="text-gray-100 mt-1">Daftar transaksi pembayaran layanan Anda.</p>
             </div>
 
             {payments.length === 0 ? (

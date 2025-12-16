@@ -9,8 +9,8 @@ export default async function ServicesPage() {
     return (
         <DashboardLayout>
             <div className="mb-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Layanan Kami</h1>
-                <p className="text-gray-500 mt-1">Pilih layanan terbaik untuk hewan kesayangan Anda.</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-200">Layanan Kami</h1>
+                <p className="text-gray-100 mt-1">Pilih layanan terbaik untuk hewan kesayangan Anda.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

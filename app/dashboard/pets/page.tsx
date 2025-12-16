@@ -22,8 +22,8 @@ export default async function PetsPage() {
         <DashboardLayout>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Hewan Peliharaan Saya</h1>
-                    <p className="text-gray-500 mt-1">Daftar hewan kesayangan yang terdaftar.</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-200">Hewan Peliharaan Saya</h1>
+                    <p className="text-gray-100 mt-1">Daftar hewan kesayangan yang terdaftar.</p>
                 </div>
                 <Link
                     href="/dashboard/pets/add"

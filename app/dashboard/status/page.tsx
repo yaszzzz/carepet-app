@@ -34,8 +34,8 @@ export default async function StatusPage() {
     return (
         <DashboardLayout>
             <div className="mb-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Status Penitipan</h1>
-                <p className="text-gray-500 mt-1">Pantau status terkini hewan peliharaan Anda.</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-200">Status Penitipan</h1>
+                <p className="text-gray-100 mt-1">Pantau status terkini hewan peliharaan Anda.</p>
             </div>
 
             {activeBookings.length === 0 ? (
