@@ -8,6 +8,7 @@ import { User, Mail, Phone, MapPin, Lock, Camera, Save, AlertCircle } from 'luci
 import { updateProfile, changePassword } from '@/lib/actions/user';
 import { useRouter } from 'next/navigation';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const AccountSettingsForm = ({ user }: { user: any }) => {
     const router = useRouter();
     const [isLoadingProfile, setIsLoadingProfile] = useState(false);

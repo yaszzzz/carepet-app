@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { CheckCircle, XCircle, Check, Clock, Calendar, User, PawPrint } from 'lucide-react';
 import { updateBookingStatus } from '@/lib/actions/admin/booking';
 
-interface AdminBookingCardProps {
+export interface AdminBookingCardProps {
     booking: {
         id_pemesanan: string;
         hewan: {
@@ -13,7 +13,7 @@ interface AdminBookingCardProps {
             jenis: string;
             pengguna: {
                 nama_pengguna: string;
-                no_hp?: string | null;
+                no_hp?: string | null; // Allow null or undefined
             };
         };
         tgl_masuk: Date;
@@ -24,6 +24,22 @@ interface AdminBookingCardProps {
         };
     };
 }
+
+const StatusBadge = ({ status }: { status: string }) => {
+    const styles = {
+        Menunggu: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+        Proses: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+        Selesai: 'bg-green-500/10 text-green-500 border-green-500/20',
+        Dibatalkan: 'bg-red-500/10 text-red-500 border-red-500/20',
+    };
+    const style = styles[status as keyof typeof styles] || styles.Menunggu;
+
+    return (
+        <span className={`px-3 py-1 rounded-full text-xs font-medium border ${style}`}>
+            {status}
+        </span>
+    );
+};
 
 export const AdminBookingCard = ({ booking }: AdminBookingCardProps) => {
     const router = useRouter();
@@ -41,22 +57,6 @@ export const AdminBookingCard = ({ booking }: AdminBookingCardProps) => {
             alert('Gagal memperbarui status');
             setIsLoading(false);
         }
-    };
-
-    const StatusBadge = ({ status }: { status: string }) => {
-        const styles = {
-            Menunggu: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
-            Proses: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-            Selesai: 'bg-green-500/10 text-green-500 border-green-500/20',
-            Dibatalkan: 'bg-red-500/10 text-red-500 border-red-500/20',
-        };
-        const style = styles[status as keyof typeof styles] || styles.Menunggu;
-
-        return (
-            <span className={`px-3 py-1 rounded-full text-xs font-medium border ${style}`}>
-                {status}
-            </span>
-        );
     };
 
     return (

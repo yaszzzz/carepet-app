@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { AdminDashboardLayout } from '@/components/templates/AdminDashboardLayout/AdminDashboardLayout';
 import { redirect } from 'next/navigation';
-import { AdminBookingCard } from '@/components/molecules/AdminBookingCard';
+import { AdminBookingCard, AdminBookingCardProps } from '@/components/molecules/AdminBookingCard';
 
 export default async function AdminBoardingPage() {
     const session = await auth();
@@ -43,10 +43,10 @@ export default async function AdminBoardingPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {bookings.map((booking) => (
+                {bookings.map((booking: AdminBookingCardProps['booking']) => (
                     <AdminBookingCard
                         key={booking.id_pemesanan}
-                        booking={booking as any} // Temporary type assertion if needed, or fix props
+                        booking={booking}
                     />
                 ))}
             </div>
