@@ -1,114 +1,206 @@
 'use client';
 
-import React, { useState } from 'react';
-import { User, Phone, Mail, Lock, Camera, Save } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/atoms/Card/Card';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/atoms/Card/Card';
 import { Button } from '@/components/atoms/Button/Button';
 import { Input } from '@/components/atoms/Input/Input';
+import { User, Mail, Phone, MapPin, Lock, Camera, Save, AlertCircle } from 'lucide-react';
+import { updateProfile, changePassword } from '@/lib/actions/user';
+import { useRouter } from 'next/navigation';
 
-export const AccountSettingsForm = () => {
-    const [loading, setLoading] = useState(false);
+export const AccountSettingsForm = ({ user }: { user: any }) => {
+    const router = useRouter();
+    const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+    const [isLoadingPassword, setIsLoadingPassword] = useState(false);
+    const [profileMessage, setProfileMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+    const [passwordMessage, setPasswordMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setLoading(false);
-            alert('Pengaturan berhasil disimpan!');
-        }, 1500);
+    const handleUpdateProfile = async (formData: FormData) => {
+        setIsLoadingProfile(true);
+        setProfileMessage(null);
+
+        const result = await updateProfile(formData);
+
+        if (result?.error) {
+            setProfileMessage({ type: 'error', text: result.error });
+        } else {
+            setProfileMessage({ type: 'success', text: 'Profil berhasil diperbarui' });
+            router.refresh();
+        }
+        setIsLoadingProfile(false);
+    };
+
+    const handleChangePassword = async (formData: FormData) => {
+        setIsLoadingPassword(true);
+        setPasswordMessage(null);
+
+        const result = await changePassword(formData);
+
+        if (result?.error) {
+            setPasswordMessage({ type: 'error', text: result.error });
+        } else {
+            setPasswordMessage({ type: 'success', text: 'Password berhasil diubah' });
+            // Reset form if possible, or just show success
+            (document.getElementById('password-form') as HTMLFormElement)?.reset();
+        }
+        setIsLoadingPassword(false);
     };
 
     return (
-        <div className="space-y-6">
-            <Card shadow="lg">
-                <CardHeader>
-                    <CardTitle>Profil Pengguna</CardTitle>
-                    <CardDescription>Kelola informasi profil publik Anda.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                        {/* Profile Picture Section */}
-                        <div className="flex flex-col sm:flex-row items-center gap-6">
-                            <div className="relative group">
-                                <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border-4 border-white shadow-md">
-                                    {/* Placeholder for user image */}
-                                    <User className="w-12 h-12 text-gray-400" />
-                                </div>
-                                <button
-                                    type="button"
-                                    className="absolute bottom-0 right-0 p-2 bg-[#658C58] text-white rounded-full hover:bg-[#557A47] transition-colors shadow-sm"
-                                    title="Ganti Foto"
-                                >
-                                    <Camera size={16} />
-                                </button>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column: Profile Picture & Basic Info */}
+            <div className="lg:col-span-1 space-y-6">
+                <Card shadow="md">
+                    <CardHeader>
+                        <CardTitle>Foto Profil</CardTitle>
+                        <CardDescription>Perbarui foto profil Anda.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center">
+                        <div className="relative mb-4 group cursor-pointer">
+                            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-50 shadow-inner">
+                                <img
+                                    src={`https://ui-avatars.com/api/?name=${user.name}&background=random`}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
-                            <div className="text-center sm:text-left">
-                                <h3 className="font-medium text-gray-900">Foto Profil</h3>
-                                <p className="text-sm text-gray-500 mt-1">
-                                    Format yang didukung: JPG, PNG. Ukuran maks: 2MB.
-                                </p>
+                            <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Camera className="text-white" size={24} />
                             </div>
                         </div>
+                        <p className="text-sm text-gray-500 mb-4 text-center">
+                            Klik gambar untuk mengubah.<br />
+                            Format: JPG, PNG. Kl. 2MB.
+                        </p>
+                        <Button variant="outline" size="sm" className="w-full">
+                            Hapus Foto
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Personal Information */}
-                            <div className="space-y-6">
-                                <h4 className="font-medium text-gray-900 border-b pb-2">Informasi Pribadi</h4>
+            {/* Right Column: Forms */}
+            <div className="lg:col-span-2 space-y-8">
+                {/* Personal Information */}
+                <Card shadow="md">
+                    <CardHeader>
+                        <CardTitle>Informasi Pribadi</CardTitle>
+                        <CardDescription>Kelola data diri dan kontak Anda.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form action={handleUpdateProfile} className="space-y-4">
+                            {profileMessage && (
+                                <div className={`p-3 rounded-lg text-sm flex items-center gap-2 ${profileMessage.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                                    <AlertCircle size={16} />
+                                    {profileMessage.text}
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <Input
                                     label="Nama Lengkap"
-                                    placeholder="Masukkan nama lengkap Anda"
-                                    defaultValue="Budi Santoso"
+                                    name="nama"
+                                    defaultValue={user.name}
                                     leftIcon={<User size={18} />}
                                 />
-                                <Input
-                                    label="Nomor Telepon"
-                                    placeholder="0812xxxx"
-                                    defaultValue="081234567890"
-                                    type="tel"
-                                    leftIcon={<Phone size={18} />}
-                                />
-                                <Input
-                                    label="Alamat Email"
-                                    placeholder="email@example.com"
-                                    defaultValue="budi@example.com"
-                                    type="email"
-                                    leftIcon={<Mail size={18} />}
-                                />
+                                <div className="space-y-1">
+                                    <label className="text-sm font-medium text-gray-700">Email</label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                        <input
+                                            type="email"
+                                            value={user.email}
+                                            disabled
+                                            className="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-gray-500 cursor-not-allowed"
+                                        />
+                                    </div>
+                                    <p className="text-xs text-gray-500">Email tidak dapat diubah.</p>
+                                </div>
                             </div>
 
-                            {/* Security Settings */}
-                            <div className="space-y-6">
-                                <h4 className="font-medium text-gray-900 border-b pb-2">Keamanan</h4>
-                                <Input
-                                    label="Password Lama"
-                                    placeholder="Masukkan password lama"
-                                    type="password"
-                                    leftIcon={<Lock size={18} />}
-                                />
+                            <Input
+                                label="Nomor Telepon"
+                                name="no_hp"
+                                defaultValue={user.no_hp || ''} // Handle potentially missing data
+                                placeholder="08123456789"
+                                leftIcon={<Phone size={18} />}
+                            />
+
+                            <div className="space-y-1">
+                                <label className="text-sm font-medium text-gray-700">Alamat Lengkap</label>
+                                <div className="relative">
+                                    <MapPin className="absolute left-3 top-3 text-gray-400" size={18} />
+                                    <textarea
+                                        name="alamat"
+                                        defaultValue={user.alamat || ''} // Handle potentially missing data
+                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 min-h-[100px]"
+                                        placeholder="Jl. Contoh No. 123, Kota..."
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="pt-2 flex justify-end">
+                                <Button type="submit" isLoading={isLoadingProfile} className="bg-indigo-600 text-white hover:bg-indigo-700">
+                                    <Save size={18} className="mr-2" />
+                                    Simpan Perubahan
+                                </Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
+
+                {/* Password Change */}
+                <Card shadow="md">
+                    <CardHeader>
+                        <CardTitle>Keamanan</CardTitle>
+                        <CardDescription>Ganti password akun Anda secara berkala.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form id="password-form" action={handleChangePassword} className="space-y-4">
+                            {passwordMessage && (
+                                <div className={`p-3 rounded-lg text-sm flex items-center gap-2 ${passwordMessage.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                                    <AlertCircle size={16} />
+                                    {passwordMessage.text}
+                                </div>
+                            )}
+
+                            <Input
+                                label="Password Saat Ini"
+                                name="currentPassword"
+                                type="password"
+                                placeholder="••••••••"
+                                leftIcon={<Lock size={18} />}
+                                required
+                            />
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <Input
                                     label="Password Baru"
-                                    placeholder="Masukkan password baru"
+                                    name="newPassword"
                                     type="password"
+                                    placeholder="••••••••"
                                     leftIcon={<Lock size={18} />}
+                                    required
                                 />
                                 <Input
-                                    label="Konfirmasi Password Baru"
-                                    placeholder="Ulangi password baru"
+                                    label="Konfirmasi Password"
+                                    name="confirmPassword"
                                     type="password"
+                                    placeholder="••••••••"
                                     leftIcon={<Lock size={18} />}
+                                    required
                                 />
                             </div>
-                        </div>
 
-                        <div className="flex justify-end pt-4 border-t border-gray-100">
-                            <Button type="submit" isLoading={loading} leftIcon={<Save size={18} />}>
-                                Simpan Perubahan
-                            </Button>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
+                            <div className="pt-2 flex justify-end">
+                                <Button type="submit" variant="outline" isLoading={isLoadingPassword}>
+                                    Update Password
+                                </Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     );
 };

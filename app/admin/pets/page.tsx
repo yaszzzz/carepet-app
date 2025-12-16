@@ -4,6 +4,7 @@ import { AdminDashboardLayout } from '@/components/templates/AdminDashboardLayou
 import { Card, CardContent } from '@/components/atoms/Card/Card';
 import { Dog, Search, Trash2, Edit, AlertCircle } from 'lucide-react';
 import { redirect } from 'next/navigation';
+import { AdminPetRow } from '@/components/molecules/AdminPetRow';
 
 export default async function AdminPetsPage() {
     const session = await auth();
@@ -63,52 +64,11 @@ export default async function AdminPetsPage() {
                                     </td>
                                 </tr>
                             ) : (
-                                pets.map((pet) => (
-                                    <tr key={pet.id_hewan} className="hover:bg-gray-700/50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold shadow-lg">
-                                                    {pet.nama_hewan.charAt(0)}
-                                                </div>
-                                                <div>
-                                                    <p className="font-medium text-white">{pet.nama_hewan}</p>
-                                                    <p className="text-xs text-gray-500">ID: {pet.id_hewan}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <p className="text-gray-300">{pet.pengguna.nama_pengguna}</p>
-                                            <p className="text-xs text-gray-500">{pet.pengguna.no_hp}</p>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="px-2 py-1 rounded-full bg-gray-700 text-gray-300 text-xs">
-                                                {pet.jenis}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {pet.usia} Tahun
-                                        </td>
-                                        <td className="px-6 py-4 max-w-xs truncate">
-                                            {pet.kebutuhan_khusus ? (
-                                                <div className="flex items-center gap-2 text-amber-500">
-                                                    <AlertCircle size={14} />
-                                                    <span className="truncate">{pet.kebutuhan_khusus}</span>
-                                                </div>
-                                            ) : (
-                                                <span className="text-gray-600">-</span>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <button className="p-2 rounded-lg hover:bg-indigo-500/20 text-gray-400 hover:text-indigo-400 transition-colors">
-                                                    <Edit size={18} />
-                                                </button>
-                                                <button className="p-2 rounded-lg hover:bg-red-500/20 text-gray-400 hover:text-red-400 transition-colors">
-                                                    <Trash2 size={18} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                pets.map(pet => (
+                                    <AdminPetRow
+                                        key={pet.id_hewan}
+                                        pet={pet}
+                                    />
                                 ))
                             )}
                         </tbody>

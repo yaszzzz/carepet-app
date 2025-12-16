@@ -22,6 +22,7 @@ export default async function ServicesPage() {
                         description={service.deskripsi}
                         duration="1 Hari" // Default duration
                         category="other" // Default category
+                        bookingHref={`/dashboard/services/book/${service.id_layanan}`}
                         onBook={() => { }} // Placeholder
                         onLearnMore={() => { }} // Placeholder
                     />

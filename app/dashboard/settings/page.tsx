@@ -1,10 +1,35 @@
 'use client';
 
+import { auth } from '@/auth';
+import { prisma } from '@/lib/prisma';
 import { DashboardLayout } from '@/components/templates/DashboardLayout/DashboardLayout';
 import { AccountSettingsForm } from '@/components/organisms/AccountSettingsForm';
+import { redirect } from 'next/navigation';
 import { Settings } from 'lucide-react';
 
-export default function ClientSettingsPage() {
+export default async function SettingsPage() {
+    const session = await auth();
+    if (!session?.user?.id) {
+        redirect('/login');
+    }
+
+    const user = await prisma.pengguna.findUnique({
+        where: { id_pengguna: session.user.id }
+    });
+
+    if (!user) {
+        redirect('/login');
+    }
+
+    // Map Prisma user to the shape expected by form if needed, or just pass user
+    // The form uses: name (from session or user), email, no_hp, alamat
+    const userData = {
+        name: user.nama_pengguna,
+        email: user.email,
+        no_hp: user.no_hp,
+        alamat: user.alamat
+    };
+
     return (
         <DashboardLayout>
             <div className="mb-6 sm:mb-8">
@@ -20,7 +45,7 @@ export default function ClientSettingsPage() {
             </div>
 
             <div className="max-w-4xl mx-auto">
-                <AccountSettingsForm />
+                <AccountSettingsForm user={userData} />
             </div>
         </DashboardLayout>
     );

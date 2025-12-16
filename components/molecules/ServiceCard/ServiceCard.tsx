@@ -11,15 +11,16 @@ export interface ServiceCardProps {
   price: string;
   duration: string;
   category: 'grooming' | 'vet' | 'boarding' | 'training' | 'other';
-  
+
   // UI props
   icon?: React.ReactNode;
   featured?: boolean;
   className?: string;
-  
+
   // Action props
   onBook?: () => void;
   onLearnMore?: () => void;
+  bookingHref?: string;
 }
 
 const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
@@ -36,7 +37,7 @@ const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
     onLearnMore,
     ...props
   }, ref) => {
-    
+
     // Category styling
     const categoryStyles = {
       grooming: {
@@ -106,7 +107,7 @@ const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
                 <div className="text-2xl">{displayIcon}</div>
               )}
             </div>
-            
+
             <span className={cn(
               'px-3 py-1 rounded-full text-xs font-semibold',
               styles.badge
@@ -114,7 +115,7 @@ const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
               {category.charAt(0).toUpperCase() + category.slice(1)}
             </span>
           </div>
-          
+
           <CardTitle className={cn('text-xl', styles.text)}>
             {title}
           </CardTitle>
@@ -125,7 +126,7 @@ const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
           <P className="text-sm text-gray-700 line-clamp-3">
             {description}
           </P>
-          
+
           {/* Price & Duration */}
           <div className="flex justify-between items-center pt-4 border-t border-gray-100">
             <div>
@@ -136,23 +137,23 @@ const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
                 {price}
               </span>
             </div>
-            
+
             <div className="text-right">
               <Small className="text-gray-500">
                 Estimasi waktu
               </Small>
               <div className="flex items-center text-gray-600">
-                <svg 
-                  className="w-4 h-4 mr-1" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  className="w-4 h-4 mr-1"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" 
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
                 <span className="font-small">{duration}</span>
@@ -164,16 +165,25 @@ const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
         {/* Card Footer with Actions */}
         <CardFooter className="pt-4">
           <div className="flex flex-col sm:flex-row gap-3 w-full">
-            <Button
-              className="flex-1 text-sm"
-              style={{
-                backgroundColor: '#658C58',
-              }}
-              onClick={onBook}
-            >
-              Booking Sekarang
-            </Button>
-            
+            {bookingHref ? (
+              <Link href={bookingHref} className="flex-1 w-full">
+                <Button
+                  className="w-full text-sm"
+                  style={{ backgroundColor: '#658C58' }}
+                >
+                  Booking Sekarang
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                className="flex-1 text-sm"
+                style={{ backgroundColor: '#658C58' }}
+                onClick={onBook}
+              >
+                Booking Sekarang
+              </Button>
+            )}
+
             <Button
               variant="outline"
               className="flex-1 text-sm"
