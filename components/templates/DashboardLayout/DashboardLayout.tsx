@@ -31,10 +31,17 @@ const menuItems = [
     { icon: Settings, label: 'Pengaturan', href: '/dashboard#settings' },
 ];
 
+
+import { signOutUser } from '@/lib/actions/auth';
+
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [notifMenuOpen, setNotifMenuOpen] = useState(false);
+
+    const handleLogout = async () => {
+        await signOutUser();
+    };
 
     const notifications = [
         {
@@ -160,11 +167,14 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                                                 <p className="font-semibold text-gray-800">Akun Saya</p>
                                                 <p className="text-sm text-gray-500">user@email.com</p>
                                             </div>
-                                            <Link href="/dashboard#settings" className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50">
+                                            <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50">
                                                 <Settings size={18} />
                                                 <span>Pengaturan</span>
                                             </Link>
-                                            <button className="w-full flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50">
+                                            <button
+                                                onClick={handleLogout}
+                                                className="w-full flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50"
+                                            >
                                                 <LogOut size={18} />
                                                 <span>Keluar</span>
                                             </button>
@@ -230,7 +240,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                                         <p className="font-semibold text-gray-800">Akun Saya</p>
                                         <p className="text-xs text-gray-500">user@email.com</p>
                                     </div>
-                                    <button className="p-2 rounded-lg text-red-600 hover:bg-red-50">
+                                    <button
+                                        onClick={handleLogout}
+                                        className="p-2 rounded-lg text-red-600 hover:bg-red-50"
+                                    >
                                         <LogOut size={20} />
                                     </button>
                                 </div>
@@ -249,3 +262,4 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </div>
     );
 };
+

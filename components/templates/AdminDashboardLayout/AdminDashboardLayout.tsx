@@ -33,10 +33,17 @@ const menuItems = [
     { icon: Settings, label: 'Pengaturan', href: '/admin/settings' },
 ];
 
+
+import { signOutAdmin } from '@/lib/actions/auth';
+
 export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [notifMenuOpen, setNotifMenuOpen] = useState(false);
+
+    const handleLogout = async () => {
+        await signOutAdmin();
+    };
 
     const notifications = [
         {
@@ -166,7 +173,10 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
                                                 <Settings size={18} />
                                                 <span>Pengaturan</span>
                                             </Link>
-                                            <button className="w-full flex items-center gap-3 px-4 py-2 text-red-400 hover:bg-gray-700">
+                                            <button
+                                                onClick={handleLogout}
+                                                className="w-full flex items-center gap-3 px-4 py-2 text-red-400 hover:bg-gray-700"
+                                            >
                                                 <LogOut size={18} />
                                                 <span>Keluar</span>
                                             </button>
@@ -217,7 +227,10 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
                                         <p className="font-semibold text-white">Admin</p>
                                         <p className="text-xs text-gray-400">admin@carepet.com</p>
                                     </div>
-                                    <button className="p-2 rounded-lg text-red-400 hover:bg-gray-700">
+                                    <button
+                                        onClick={handleLogout}
+                                        className="p-2 rounded-lg text-red-400 hover:bg-gray-700"
+                                    >
                                         <LogOut size={20} />
                                     </button>
                                 </div>
@@ -236,3 +249,4 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
         </div>
     );
 };
+
