@@ -96,6 +96,28 @@ export default async function StatusPage() {
                                         <div className="bg-[#BBC863] h-2 rounded-full" style={{ width: '60%' }}></div>
                                     </div>
                                 </div>
+
+                                {/* Condition Update */}
+                                {(booking.catatan || booking.foto_kondisi) && (
+                                    <div className="mt-4 p-3 bg-white border border-gray-100 rounded-lg shadow-sm">
+                                        <p className="text-xs font-semibold text-[#658C58] mb-2 uppercase tracking-wide">Update Terkini</p>
+                                        {booking.foto_kondisi && (
+                                            <div className="mb-2 rounded-md overflow-hidden h-40 w-full relative">
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                <img
+                                                    src={booking.foto_kondisi}
+                                                    alt="Kondisi Hewan"
+                                                    className="object-cover w-full h-full"
+                                                />
+                                            </div>
+                                        )}
+                                        {booking.catatan && (
+                                            <p className="text-sm text-gray-600 italic">
+                                                "{booking.catatan}"
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
                     ))}

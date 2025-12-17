@@ -85,6 +85,7 @@ model Pemesanan {
   tgl_keluar   DateTime @db.Date
   status       String   @db.VarChar(20)
   catatan      String?  @db.VarChar(255)
+  foto_kondisi String?  @db.VarChar(255) // URL foto update kondisi hewan
   
   // Relasi many-to-one dengan Hewan
   hewan        Hewan      @relation(fields: [id_hewan], references: [id_hewan], onDelete: Cascade)

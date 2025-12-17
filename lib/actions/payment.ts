@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 
 import { writeFile } from 'fs/promises'; // Import file system module
 import { join } from 'path';
+import { createNotification } from '@/lib/actions/notifications';
 
 export async function processPayment(formData: FormData) {
     const session = await auth();
@@ -79,6 +80,15 @@ export async function processPayment(formData: FormData) {
         await prisma.pemesanan.update({
             where: { id_pemesanan: bookingId },
             data: { status: 'Menunggu Konfirmasi' }
+        });
+
+        // Notify Admin
+        await createNotification({
+            userId: 'ADMIN',
+            title: 'Pembayaran Baru',
+            message: `Pembayaran untuk booking #${bookingId} menunggu verifikasi.`,
+            type: 'INFO',
+            link: '/admin/payments'
         });
 
     } catch (error) {

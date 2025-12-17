@@ -179,6 +179,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 session.user.role = token.role as string;
                 // @ts-ignore
                 session.user.image = token.picture;
+                session.user.email = token.email as string || session.user.email; // Ensure email is passed
             }
             return session;
         }

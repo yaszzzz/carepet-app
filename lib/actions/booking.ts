@@ -3,6 +3,7 @@
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { createNotification } from './notifications';
 
 
 export async function createBooking(formData: FormData) {
@@ -68,6 +69,15 @@ export async function createBooking(formData: FormData) {
                 // catatan: formData.get('catatan') as string || null // DISABLED TEMPORARILY: Requires server restart
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any
+        });
+
+        // Notify Admin
+        await createNotification({
+            userId: 'ADMIN',
+            title: 'Booking Baru',
+            message: `Booking #${newId} baru saja dibuat.`,
+            type: 'INFO',
+            link: '/admin/boarding' // Link to boarding mgmt
         });
 
         // 2. Redirect/Revalidate

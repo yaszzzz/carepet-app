@@ -3,14 +3,30 @@ import { prisma } from '@/lib/prisma';
 import { AdminDashboardLayout } from '@/components/templates/AdminDashboardLayout/AdminDashboardLayout';
 import { redirect } from 'next/navigation';
 import { AdminBookingCard, AdminBookingCardProps } from '@/components/molecules/AdminBookingCard';
+import { SearchInput } from '@/components/atoms/SearchInput/SearchInput';
 
-export default async function AdminBoardingPage() {
+export default async function AdminBoardingPage({
+    searchParams,
+}: {
+    searchParams?: {
+        query?: string;
+    };
+}) {
     const session = await auth();
-    if (!session?.user?.email) {
+    if (!session?.user) {
         redirect('/admin/login');
     }
 
+    const query = searchParams?.query || '';
+
     const bookings = await prisma.pemesanan.findMany({
+        where: {
+            OR: [
+                { hewan: { nama_hewan: { contains: query, mode: 'insensitive' } } },
+                { hewan: { pengguna: { nama_pengguna: { contains: query, mode: 'insensitive' } } } },
+                { id_pemesanan: { contains: query, mode: 'insensitive' } }
+            ]
+        },
         include: {
             hewan: {
                 select: { // Or include? Using select to pick specific fields
@@ -37,9 +53,12 @@ export default async function AdminBoardingPage() {
 
     return (
         <AdminDashboardLayout>
-            <div className="mb-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-white">Kelola Penitipan</h1>
-                <p className="text-gray-400 mt-1">Pantau dan kelola status penitipan hewan.</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-white">Kelola Penitipan</h1>
+                    <p className="text-gray-400 mt-1">Pantau dan kelola status penitipan hewan.</p>
+                </div>
+                <SearchInput placeholder="Cari ID, hewan, atau pemilik..." />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">

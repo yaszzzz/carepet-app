@@ -19,6 +19,7 @@ export const AdminBookingStatusModal = ({ bookingId, currentStatus, currentNotes
     const [isLoading, setIsLoading] = useState(false);
     const [status, setStatus] = useState(currentStatus);
     const [notes, setNotes] = useState(currentNotes || '');
+    const [photo, setPhoto] = useState<File | null>(null);
 
     if (!isOpen) return null;
 
@@ -26,7 +27,14 @@ export const AdminBookingStatusModal = ({ bookingId, currentStatus, currentNotes
         e.preventDefault();
         setIsLoading(true);
 
-        const result = await updateBookingStatus(bookingId, status, notes);
+        const formData = new FormData();
+        formData.append('id_pemesanan', bookingId);
+        formData.append('status', status);
+        if (notes) formData.append('notes', notes);
+        if (photo) formData.append('photo', photo);
+
+        // Call the server action with formData
+        const result = await updateBookingStatus(formData);
 
         if (result?.success) {
             toast.success('Status berhasil diperbarui');
@@ -74,6 +82,19 @@ export const AdminBookingStatusModal = ({ bookingId, currentStatus, currentNotes
                             onChange={(e) => setNotes(e.target.value)}
                             className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-indigo-500 min-h-[100px]"
                             placeholder="Contoh: Hewan sehat, makan lahap, sudah dimandikan..."
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                            Foto Kondisi Terkini
+                            <span className="text-xs text-gray-500 ml-2">(Opsional)</span>
+                        </label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+                            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-gray-300 text-sm focus:outline-none focus:border-indigo-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500"
                         />
                     </div>
 

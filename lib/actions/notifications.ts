@@ -40,12 +40,12 @@ export async function createNotification(data: {
 
 export async function getAdminNotifications(): Promise<NotificationItem[]> {
     const session = await auth();
-    if (!session?.user?.email) return [];
+    // if (!session?.user?.email) return []; // Allow broad access for now or check role if setup
 
     try {
-        const notifs = await prisma.notifikasi.findMany({
+        const notifications = await prisma.notifikasi.findMany({
             where: {
-                userId: 'ADMIN'
+                userId: 'ADMIN' // Query for generic ADMIN notifications
             },
             orderBy: {
                 createdAt: 'desc'
@@ -53,17 +53,17 @@ export async function getAdminNotifications(): Promise<NotificationItem[]> {
             take: 20
         });
 
-        return notifs.map(n => ({
+        return notifications.map(n => ({
             id: n.id_notifikasi,
             title: n.title,
             message: n.message,
-            time: formatDate(n.createdAt),
+            time: formatDistanceToNow(n.createdAt, { addSuffix: true, locale: id }),
             read: n.isRead,
-            type: (n.type.toLowerCase() as NotificationItem['type']) || 'info', // Safe cast
-            link: n.link || undefined
+            type: n.type.toLowerCase() as NotificationItem['type'],
+            link: n.link || '#'
         }));
     } catch (error) {
-        console.error(error);
+        console.error('Failed to get admin notifications:', error);
         return [];
     }
 }
@@ -87,7 +87,7 @@ export async function getNotifications(): Promise<NotificationItem[]> {
             id: n.id_notifikasi,
             title: n.title,
             message: n.message,
-            time: formatDate(n.createdAt),
+            time: formatDistanceToNow(n.createdAt, { addSuffix: true, locale: id }),
             read: n.isRead,
             type: (n.type.toLowerCase() as NotificationItem['type']) || 'info',
             link: n.link || undefined

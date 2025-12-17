@@ -22,14 +22,13 @@ export interface AdminBookingCardProps {
         tgl_keluar: Date;
         status: string;
         catatan?: string | null;
+        foto_kondisi?: string | null;
         layanan: {
             nama_layanan: string;
         };
     };
 }
-
 const StatusBadge = ({ status }: { status: string }) => {
-    // ... (keep existing StatusBadge)
     const styles = {
         'Menunggu Pembayaran': 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
         'Menunggu Konfirmasi': 'bg-orange-500/10 text-orange-500 border-orange-500/20',
@@ -53,13 +52,22 @@ export const AdminBookingCard = ({ booking }: AdminBookingCardProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleUpdateStatus = (status: string) => {
-        // ... (existing handleUpdateStatus logic)
         toast("Ubah status menjadi " + status + "?", {
             action: {
                 label: "Ya",
                 onClick: async () => {
                     setIsLoading(true);
-                    const result = await updateBookingStatus(booking.id_pemesanan, status);
+
+                    // Logic to handle status update. 
+                    // WARNING: updateBookingStatus now requires FormData because of photo upload logic refactor.
+                    // However, for simple status updates (buttons), we don't have a form.
+                    // We need to create FormData here.
+
+                    const formData = new FormData();
+                    formData.append('id_pemesanan', booking.id_pemesanan);
+                    formData.append('status', status);
+
+                    const result = await updateBookingStatus(formData);
 
                     if (result?.success) {
                         toast.success("Status berhasil diperbarui");
@@ -88,7 +96,7 @@ export const AdminBookingCard = ({ booking }: AdminBookingCardProps) => {
             </button>
             <div className="flex justify-between items-start mb-4 pr-10">
                 <div className="flex gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-gray-700 flex items-center justify-center text-2xl">
+                    <div className="w-12 h-12 rounded-lg bg-gray-700 flex items-center justify-center text-2xl overflow-hidden relative">
                         {booking.hewan.jenis === 'Kucing' ? '🐱' : '🐶'}
                     </div>
                     <div>
@@ -128,6 +136,24 @@ export const AdminBookingCard = ({ booking }: AdminBookingCardProps) => {
                 <PawPrint size={14} />
                 <span>Layanan: <span className="text-indigo-400 font-medium">{booking.layanan.nama_layanan}</span></span>
             </div>
+
+            {/* Display Condition Photo & Notes if available */}
+            {(booking.catatan || booking.foto_kondisi) && (
+                <div className="mb-6 p-3 rounded-lg bg-gray-700/30 border border-gray-700">
+                    <p className="text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">Update Terkini</p>
+                    {booking.foto_kondisi && (
+                        <div className="mb-3 rounded-lg overflow-hidden border border-gray-600">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={booking.foto_kondisi} alt="Kondisi Hewan" className="w-full h-32 object-cover" />
+                        </div>
+                    )}
+                    {booking.catatan && (
+                        <p className="text-sm text-gray-300 italic">
+                            "{booking.catatan}"
+                        </p>
+                    )}
+                </div>
+            )}
 
             <div className="flex gap-2 pt-4 border-t border-gray-700">
                 {/* Actions based on Status */}
