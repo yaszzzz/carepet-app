@@ -165,13 +165,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 // If it's a social login, we need to fetch the ID we just created/found from DB
                 // because the `user` object from provider might not have our internal ID.
                 if (account?.provider === 'google' || account?.provider === 'facebook') {
-                    const dbUser = await prisma.pengguna.findUnique({
-                        where: { email: user.email! },
-                    });
-                    if (dbUser) {
-                        token.id = dbUser.id_pengguna;
-                        token.role = 'user';
-                        token.picture = dbUser.foto; // Use our DB photo
+                    if (user.email) {
+                        const dbUser = await prisma.pengguna.findUnique({
+                            where: { email: user.email },
+                        });
+                        if (dbUser) {
+                            token.id = dbUser.id_pengguna;
+                            token.role = 'user';
+                            token.picture = dbUser.foto; // Use our DB photo
+                        }
                     }
                 } else {
                     // Credentials login

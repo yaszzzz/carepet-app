@@ -10,7 +10,7 @@ interface AuthLayoutProps {
 
 export const AuthLayout = ({ children }: AuthLayoutProps) => {
     return (
-        <div className="min-h-screen w-full flex bg-gradient-to-r from-[#F0E491]/20 via-[#BBC863]/10 to-[#658C58]/5 pt-15">
+        <div className="min-h-screen w-full flex bg-gradient-to-r from-[#F0E491]/20 via-[#BBC863]/10 to-[#658C58]/5">
             {/* Left Side - Hero/Decorative (Hidden on mobile) */}
             <div className="hidden lg:flex w-1/2 relative items-center justify-center p-12">
                 <div className="relative w-full max-w-lg aspect-square">

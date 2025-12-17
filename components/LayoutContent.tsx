@@ -11,9 +11,7 @@ export const LayoutContent = ({ children }: { children: ReactNode }) => {
     // Pages specifically needing the Navbar hidden (Login/Register/Dashboard/Admin)
     const hideNavbar =
         pathname.startsWith('/dashboard') ||
-        pathname.startsWith('/admin') ||
-        pathname === '/login' ||
-        pathname === '/register';
+        (pathname.startsWith('/admin') && pathname !== '/admin/login');
 
     // Footer only on exact home page
     const showFooter = pathname === '/';

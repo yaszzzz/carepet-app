@@ -165,7 +165,7 @@ export async function signInUser(email: string, password: string) {
  * Sign out the current user
  */
 export async function signOutUser() {
-    await nextAuthSignOut({ redirectTo: '/login' });
+    await nextAuthSignOut({ redirectTo: '/' });
 }
 
 /**
