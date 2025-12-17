@@ -1,6 +1,8 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
+import { getAdminNotifications, NotificationItem } from '@/lib/actions/notifications';
+import { Toaster } from 'sonner';
 import {
     PawPrint,
     LayoutDashboard,
@@ -51,29 +53,23 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
         await signOutAdmin();
     };
 
-    const notifications = [
-        {
-            id: '1',
-            title: 'Pembayaran baru masuk',
-            message: 'Pembayaran dari user@email.com sebesar Rp 600.000',
-            time: '2 menit lalu',
-            read: false,
-        },
-        {
-            id: '2',
-            title: 'Penitipan baru',
-            message: 'Permintaan penitipan baru dari pelanggan',
-            time: '15 menit lalu',
-            read: false,
-        },
-        {
-            id: '3',
-            title: 'Hewan baru terdaftar',
-            message: 'Bruno (Golden Retriever) telah terdaftar',
-            time: '1 jam lalu',
-            read: true,
-        },
-    ];
+    const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+
+    useEffect(() => {
+        const fetchNotifs = async () => {
+            // Avoid fetching if not logged in (though layout implies logged in)
+            // and prevent hydration mismatch if possible
+            if (session?.user?.email) {
+                try {
+                    const data = await getAdminNotifications();
+                    setNotifications(data);
+                } catch (error) {
+                    console.error("Failed to fetch admin notifications", error);
+                }
+            }
+        };
+        fetchNotifs();
+    }, [session]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
@@ -252,6 +248,7 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
                     {children}
                 </div>
             </main>
+            <Toaster position="top-right" />
         </div>
     );
 };

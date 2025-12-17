@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Eye, Edit, Trash2 } from 'lucide-react';
 import { deletePetAdmin } from '@/lib/actions/admin/pet';
 import { EditPetModal } from '@/components/organisms/EditPetModal';
+import { toast } from 'sonner';
 
 interface AdminPetRowProps {
     pet: {
@@ -25,18 +26,28 @@ export const AdminPetRow = ({ pet }: AdminPetRowProps) => {
     const [isDeleting, setIsDeleting] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
 
-    const handleDelete = async () => {
-        if (!confirm(`Apakah Anda yakin ingin menghapus ${pet.nama_hewan}?`)) return;
+    const handleDelete = () => {
+        toast("Apakah Anda yakin ingin menghapus " + pet.nama_hewan + "?", {
+            action: {
+                label: "Hapus",
+                onClick: async () => {
+                    setIsDeleting(true);
+                    const result = await deletePetAdmin(pet.id_hewan);
 
-        setIsDeleting(true);
-        const result = await deletePetAdmin(pet.id_hewan);
-
-        if (result?.success) {
-            router.refresh();
-        } else {
-            alert('Gagal menghapus hewan');
-            setIsDeleting(false);
-        }
+                    if (result?.success) {
+                        toast.success("Hewan berhasil dihapus");
+                        router.refresh();
+                    } else {
+                        toast.error("Gagal menghapus hewan");
+                        setIsDeleting(false);
+                    }
+                }
+            },
+            cancel: {
+                label: "Batal",
+                onClick: () => { }
+            }
+        });
     };
 
     return (

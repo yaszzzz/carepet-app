@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/atoms/Input/Input';
 import { Button } from '@/components/atoms/Button/Button';
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
@@ -11,7 +11,18 @@ export const AdminLoginForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const [savedUsername, setSavedUsername] = useState('');
     const [error, setError] = useState<string | null>(null);
+
+
+
+    useEffect(() => {
+        const saved = localStorage.getItem('adminRememberedUsername');
+        if (saved) {
+            setSavedUsername(saved);
+            setRememberMe(true);
+        }
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -21,6 +32,13 @@ export const AdminLoginForm = () => {
         const formData = new FormData(e.currentTarget);
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
+
+        // Handle Remember Me
+        if (rememberMe) {
+            localStorage.setItem('adminRememberedUsername', email);
+        } else {
+            localStorage.removeItem('adminRememberedUsername');
+        }
 
         try {
             const result = await signInAdmin(email, password);
@@ -59,6 +77,7 @@ export const AdminLoginForm = () => {
                         </div>
                         <input
                             name="email"
+                            defaultValue={savedUsername}
                             type="text"
                             placeholder="username"
                             required
@@ -97,7 +116,7 @@ export const AdminLoginForm = () => {
                 </div>
             </div>
 
-            {/* Remember Me & Forgot Password */}
+            {/* Remember Me */}
             <div className="flex items-center justify-between">
                 <label className="flex items-center cursor-pointer">
                     <input
@@ -108,12 +127,6 @@ export const AdminLoginForm = () => {
                     />
                     <span className="ml-2 text-sm text-gray-400">Remember me</span>
                 </label>
-                <Link
-                    href="/admin/forgot-password"
-                    className="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
-                >
-                    Forgot password?
-                </Link>
             </div>
 
             {/* Submit Button */}

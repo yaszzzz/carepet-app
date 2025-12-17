@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { X } from 'lucide-react';
 import { updatePetAdmin } from '@/lib/actions/admin/pet';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 interface EditPetModalProps {
     pet: {
@@ -33,19 +34,26 @@ export const EditPetModal = ({ pet, isOpen, onClose }: EditPetModalProps) => {
         e.preventDefault();
         setIsLoading(true);
 
-        const result = await updatePetAdmin(pet.id_hewan, {
+        const promise = updatePetAdmin(pet.id_hewan, {
             ...formData,
             usia: Number(formData.usia),
             kebutuhan_khusus: formData.kebutuhan_khusus || null
         });
 
-        setIsLoading(false);
+        toast.promise(promise, {
+            loading: 'Menyimpan perubahan...',
+            success: () => {
+                onClose();
+                router.refresh();
+                return 'Hewan berhasil diupdate';
+            },
+            error: 'Gagal mengupdate hewan'
+        });
 
-        if (result?.success) {
-            onClose();
-            router.refresh();
-        } else {
-            alert('Gagal mengupdate hewan');
+        try {
+            await promise;
+        } finally {
+            setIsLoading(false);
         }
     };
 

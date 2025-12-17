@@ -107,3 +107,62 @@ function formatDate(date: Date): string {
     const days = Math.floor(hours / 24);
     return `${days} hari lalu`;
 }
+
+export async function getAdminNotifications(): Promise<NotificationItem[]> {
+    const session = await auth();
+    // Assuming admin role check or loose check for now since it's used in Admin Layout
+    if (!session?.user?.email) return [];
+
+    // Fetch recent bookings that might need attention
+    const bookings = await prisma.pemesanan.findMany({
+        where: {
+            status: {
+                in: ['Menunggu Pembayaran', 'Baru'] // Adjust if 'Baru' exists, otherwise just Menunggu Pembayaran
+            }
+        },
+        orderBy: { tgl_masuk: 'desc' },
+        take: 10,
+        include: {
+            hewan: {
+                include: {
+                    pengguna: true
+                }
+            },
+            pembayaran: true // Check if payment proof exists?
+        }
+    });
+
+    const notifications: NotificationItem[] = [];
+
+    for (const booking of bookings) {
+        let title = '';
+        let message = '';
+        let type: NotificationItem['type'] = 'info';
+
+        if (booking.status === 'Menunggu Pembayaran') {
+            const hasProof = booking.pembayaran.some(p => p.bukti_bayar);
+            if (hasProof) {
+                title = 'Verifikasi Pembayaran';
+                message = `Bukti bayar diunggah oleh ${booking.hewan.pengguna.nama_pengguna}.`;
+                type = 'warning';
+            } else {
+                title = 'Booking Baru';
+                message = `Booking baru dari ${booking.hewan.pengguna.nama_pengguna} (${booking.hewan.nama_hewan}).`;
+                type = 'info';
+            }
+        }
+
+        if (title) {
+            notifications.push({
+                id: `admin-${booking.id_pemesanan}`,
+                title,
+                message,
+                time: formatDate(booking.tgl_masuk), // Or createdAt if available similar to before
+                read: false,
+                type
+            });
+        }
+    }
+
+    return notifications;
+}
