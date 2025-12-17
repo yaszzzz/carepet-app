@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import {
     PawPrint,
     Home,
@@ -16,6 +16,9 @@ import {
     ChevronDown
 } from 'lucide-react';
 import Link from 'next/link';
+import { signOutUser } from '@/lib/actions/auth';
+import { useSession } from 'next-auth/react';
+import { getNotifications, NotificationItem } from '@/lib/actions/notifications';
 
 interface DashboardLayoutProps {
     children: ReactNode;
@@ -31,10 +34,6 @@ const menuItems = [
     { icon: Settings, label: 'Pengaturan', href: '/dashboard/settings' },
 ];
 
-
-import { signOutUser } from '@/lib/actions/auth';
-import { useSession } from 'next-auth/react';
-
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     const { data: session } = useSession();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -48,29 +47,24 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         await signOutUser();
     };
 
-    const notifications = [
-        {
-            id: '1',
-            title: 'Mochi sudah diberi makan',
-            message: 'Pengasuh baru saja memberi makan Mochi',
-            time: '5 menit lalu',
-            read: false,
-        },
-        {
-            id: '2',
-            title: 'Pembayaran berhasil',
-            message: 'Pembayaran untuk grooming Bruno berhasil',
-            time: '1 jam lalu',
-            read: false,
-        },
-        {
-            id: '3',
-            title: 'Jadwal vaksinasi',
-            message: 'Pengingat: Vaksinasi Mochi besok pukul 10:00',
-            time: '2 jam lalu',
-            read: true,
-        },
-    ];
+    const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+    const [isLoadingNotif, setIsLoadingNotif] = useState(true);
+
+    useEffect(() => {
+        const fetchNotifs = async () => {
+            try {
+                const data = await getNotifications();
+                setNotifications(data);
+            } catch (error) {
+                console.error("Failed to fetch notifications", error);
+            } finally {
+                setIsLoadingNotif(false);
+            }
+        };
+        fetchNotifs();
+    }, []);
+
+    // ... (rest of render)
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#F0E491]/20 via-[#BBC863]/10 to-[#658C58]/5 ">

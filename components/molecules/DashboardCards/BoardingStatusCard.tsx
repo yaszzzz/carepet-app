@@ -4,8 +4,15 @@ import { Clock, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/atoms/Card/Card';
 import Link from 'next/link';
 
-export const BoardingStatusCard = () => {
-    const hasActiveBoarding = true; // This would come from API
+interface BoardingStatusCardProps {
+    data?: {
+        petName: string;
+        daysRemaining: number;
+    } | null;
+}
+
+export const BoardingStatusCard = ({ data }: BoardingStatusCardProps) => {
+    const hasActiveBoarding = !!data;
 
     return (
         <Link href="/dashboard/status">
@@ -27,14 +34,14 @@ export const BoardingStatusCard = () => {
                                         )}
                                     </div>
                                     <p className={`text-sm ${hasActiveBoarding ? 'text-white/80' : 'text-gray-500'}`}>
-                                        {hasActiveBoarding ? 'Mochi sedang dititipkan' : 'Tidak ada penitipan aktif'}
+                                        {hasActiveBoarding ? `${data?.petName} sedang dititipkan` : 'Tidak ada penitipan aktif'}
                                     </p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
                                 {hasActiveBoarding && (
                                     <div className="text-right hidden sm:block">
-                                        <p className="text-2xl font-bold text-white">3</p>
+                                        <p className="text-2xl font-bold text-white">{data?.daysRemaining}</p>
                                         <p className="text-xs text-white/70">Hari tersisa</p>
                                     </div>
                                 )}

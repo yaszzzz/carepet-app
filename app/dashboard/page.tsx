@@ -7,19 +7,25 @@ import {
     PaymentHistoryCard,
     AccountSettingsCard
 } from '@/components/molecules/DashboardCards';
+import { getDashboardStats, getActiveBoarding } from '@/lib/actions/dashboard';
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+    const stats = await getDashboardStats();
+    const activeBoarding = await getActiveBoarding();
+
     return (
         <DashboardLayout>
             {/* Dashboard Header */}
             <div className="mb-6 sm:mb-8">
                 <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard</h1>
-                <p className="text-gray-300 mt-1 text-sm sm:text-base">Selamat datang kembali! Kelola hewan peliharaan Anda dengan mudah.</p>
+                <p className="text-gray-300 mt-1 text-sm sm:text-base">
+                    Selamat datang kembali, {stats?.userName || 'Pet Lover'}! Kelola hewan peliharaan Anda dengan mudah.
+                </p>
             </div>
 
             {/* Status Penitipan Aktif - Full Width */}
             <div className="mb-6" id="status">
-                <BoardingStatusCard />
+                <BoardingStatusCard data={activeBoarding} />
             </div>
 
             {/* Main Grid - Responsive Cards */}
@@ -28,10 +34,10 @@ export default function DashboardPage() {
                     <PetProfileCard />
                 </div>
                 <div id="services">
-                    <ServiceOrderCard />
+                    <ServiceOrderCard count={stats?.serviceOrders || 0} />
                 </div>
                 <div id="boarding-history">
-                    <BoardingHistoryCard />
+                    <BoardingHistoryCard count={stats?.historyCount || 0} />
                 </div>
                 <div id="payments">
                     <PaymentHistoryCard />

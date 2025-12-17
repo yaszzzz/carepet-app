@@ -6,9 +6,8 @@ import { Button } from '@/components/atoms/Button/Button';
 import { Input } from '@/components/atoms/Input/Input';
 import { User, Mail, Phone, MapPin, Lock, Camera, Save, AlertCircle } from 'lucide-react';
 import { updateProfile, changePassword } from '@/lib/actions/user';
+import { updateProfilePicture } from '@/lib/actions/user-photo';
 import { useRouter } from 'next/navigation';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const AccountSettingsForm = ({ user }: { user: any }) => {
     const router = useRouter();
     const [isLoadingProfile, setIsLoadingProfile] = useState(false);
@@ -57,25 +56,48 @@ export const AccountSettingsForm = ({ user }: { user: any }) => {
                         <CardDescription>Perbarui foto profil Anda.</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center">
-                        <div className="relative mb-4 group cursor-pointer">
-                            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-50 shadow-inner">
-                                <img
-                                    src={`https://ui-avatars.com/api/?name=${user.name}&background=random`}
-                                    alt="Profile"
-                                    className="w-full h-full object-cover"
-                                />
+                        <form action={async (formData) => {
+                            const res = await updateProfilePicture(formData);
+                            if (res?.error) alert(res.error);
+                        }} id="profile-pic-form" className="w-full flex flex-col items-center">
+                            <input
+                                type="file"
+                                name="photo"
+                                id="photo-input"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={(e) => {
+                                    if (e.target.files?.length) {
+                                        e.currentTarget.form?.requestSubmit();
+                                    }
+                                }}
+                            />
+
+                            <div
+                                className="relative mb-4 group cursor-pointer"
+                                onClick={() => document.getElementById('photo-input')?.click()}
+                            >
+                                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-50 shadow-inner bg-gray-100">
+                                    {user.image ? (
+                                        <img src={user.image} alt="Profile" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <img
+                                            src={`https://ui-avatars.com/api/?name=${user.name}&background=random`}
+                                            alt="Profile"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    )}
+                                </div>
+                                <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Camera className="text-white" size={24} />
+                                </div>
                             </div>
-                            <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Camera className="text-white" size={24} />
-                            </div>
-                        </div>
-                        <p className="text-sm text-gray-500 mb-4 text-center">
-                            Klik gambar untuk mengubah.<br />
-                            Format: JPG, PNG. Kl. 2MB.
-                        </p>
-                        <Button variant="outline" size="sm" className="w-full bg-[red] text-white hover:bg-[red]/80">
-                            Hapus Foto
-                        </Button>
+
+                            <p className="text-sm text-gray-500 mb-4 text-center">
+                                Klik gambar untuk mengubah.<br />
+                                Format: JPG, PNG. Kl. 2MB.
+                            </p>
+                        </form>
                     </CardContent>
                 </Card>
             </div>

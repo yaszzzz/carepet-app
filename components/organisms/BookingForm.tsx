@@ -40,10 +40,23 @@ export const BookingForm = ({ service, pets }: BookingFormProps) => {
     if (startDate && endDate) {
         const start = new Date(startDate);
         const end = new Date(endDate);
-        const diffTime = Math.abs(end.getTime() - start.getTime());
-        duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        if (duration === 0) duration = 1;
-        totalPrice = duration * service.harga;
+
+        // Reset hours to ensure clean day calculation (ignoring timezones for simplicity in this context)
+        start.setHours(0, 0, 0, 0);
+        end.setHours(0, 0, 0, 0);
+
+        if (end >= start) {
+            const diffTime = Math.abs(end.getTime() - start.getTime());
+            duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            // If same day (diff 0), it counts as 1 day? Or if user wants to checkout same day.
+            // Usually boarding is per night. But if user requests "Hari ini masuk hari ini keluar", that's Day Care (1 day).
+            if (duration === 0) duration = 1;
+            totalPrice = duration * service.harga;
+        } else {
+            // Invalid range (End before Start handled by min attribute, but safe guard here)
+            duration = 0;
+            totalPrice = 0;
+        }
     }
 
     const handleSubmit = async (formData: FormData) => {
@@ -128,7 +141,13 @@ export const BookingForm = ({ service, pets }: BookingFormProps) => {
                                 required
                                 min={new Date().toISOString().split('T')[0]}
                                 value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
+                                onChange={(e) => {
+                                    setStartDate(e.target.value);
+                                    // Automatically reset end date if it becomes invalid (less than start date)
+                                    if (endDate && new Date(endDate) < new Date(e.target.value)) {
+                                        setEndDate('');
+                                    }
+                                }}
                             />
                         </div>
 
@@ -139,7 +158,7 @@ export const BookingForm = ({ service, pets }: BookingFormProps) => {
                                 name="tgl_keluar"
                                 className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-gray-600"
                                 required
-                                min={startDate || new Date().toISOString().split('T')[0]}
+                                min={startDate || new Date().toISOString().split('T')[0]} // Allow same day as start date
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
                             />

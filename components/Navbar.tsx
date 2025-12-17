@@ -4,8 +4,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { PawPrint, Menu, X, Shield } from 'lucide-react';
 
+import { useSession } from 'next-auth/react';
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
+  const user = session?.user;
 
   const navItems = [
     { name: 'Beranda', href: '/' },
@@ -37,19 +41,37 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
-            <Link
-              href="/login"
-              className="bg-[#F0E491] text-[#31694E] px-6 py-2 rounded-full hover:bg-[#557A47] hover:text-white transition-colors font-medium"
-            >
-              Login
-            </Link>
-            <Link
-              href="/admin/login"
-              className="flex items-center gap-1 text-white/70 hover:text-white transition-colors text-sm"
-              title="Admin Portal"
-            >
-              <Shield className="h-4 w-4" />
-            </Link>
+
+            {user ? (
+              <div className="flex items-center gap-3 ml-4">
+                <span className="text-white font-medium text-sm hidden lg:block">Hi, {user.name}</span>
+                <Link href="/dashboard/settings" title="Pengaturan Akun">
+                  <div className="h-10 w-10 rounded-full border-2 border-[#A3C9A8] overflow-hidden bg-white/10 hover:border-white transition-all cursor-pointer">
+                    {user.image ? (
+                      <img src={user.image} alt={user.name || 'User'} className="h-full w-full object-cover" />
+                    ) : (
+                      <img src={`https://ui-avatars.com/api/?name=${user.name}&background=random`} alt="Avatar" className="h-full w-full object-cover" />
+                    )}
+                  </div>
+                </Link>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/login"
+                  className="bg-[#F0E491] text-[#31694E] px-6 py-2 rounded-full hover:bg-[#557A47] hover:text-white transition-colors font-medium"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/admin/login"
+                  className="flex items-center gap-1 text-white/70 hover:text-white transition-colors text-sm"
+                  title="Admin Portal"
+                >
+                  <Shield className="h-4 w-4" />
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -74,21 +96,36 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
-              <Link
-                href="/login"
-                className="block w-full mt-4 bg-[#658C58] text-white px-6 py-2 rounded-full hover:bg-[#557A47] transition-colors text-center"
-                onClick={() => setIsOpen(false)}
-              >
-                Login
-              </Link>
-              <Link
-                href="/admin/login"
-                className="flex items-center justify-center gap-2 w-full mt-2 text-white/70 hover:text-white transition-colors text-sm py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                <Shield className="h-4 w-4" />
-                <span>Admin Portal</span>
-              </Link>
+
+              {!user && (
+                <>
+                  <Link
+                    href="/login"
+                    className="block w-full mt-4 bg-[#658C58] text-white px-6 py-2 rounded-full hover:bg-[#557A47] transition-colors text-center"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/admin/login"
+                    className="flex items-center justify-center gap-2 w-full mt-2 text-white/70 hover:text-white transition-colors text-sm py-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Shield className="h-4 w-4" />
+                    <span>Admin Portal</span>
+                  </Link>
+                </>
+              )}
+
+              {user && (
+                <Link
+                  href="/dashboard"
+                  className="block w-full mt-4 bg-[#white]/10 border border-white/20 text-white px-6 py-2 rounded-full text-center"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Ke Dashboard ({user.name})
+                </Link>
+              )}
             </div>
           </div>
         )}

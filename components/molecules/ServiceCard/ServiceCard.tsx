@@ -158,7 +158,7 @@ const ServiceCard = React.forwardRef<HTMLDivElement, ServiceCardProps>(
               <Small className="text-gray-500">
                 Estimasi waktu
               </Small>
-              <div className="flex items-center text-gray-600">
+              <div className="flex items-center justify-end text-gray-600">
                 <svg
                   className="w-4 h-4 mr-1"
                   fill="none"

@@ -4,7 +4,11 @@ import { History as HistoryIcon, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/atoms/Card/Card';
 import Link from 'next/link';
 
-export const BoardingHistoryCard = () => {
+interface BoardingHistoryCardProps {
+    count: number;
+}
+
+export const BoardingHistoryCard = ({ count }: BoardingHistoryCardProps) => {
     return (
         <Link href="/dashboard/history">
             <Card hover shadow="lg" className="h-full group cursor-pointer">
@@ -21,7 +25,7 @@ export const BoardingHistoryCard = () => {
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="text-right hidden sm:block">
-                                <p className="text-2xl font-bold text-[#31694E]">5</p>
+                                <p className="text-2xl font-bold text-[#31694E]">{count}</p>
                                 <p className="text-xs text-gray-500">Total</p>
                             </div>
                             <ChevronRight size={24} className="text-gray-400 group-hover:text-[#658C58] group-hover:translate-x-1 transition-all" />
