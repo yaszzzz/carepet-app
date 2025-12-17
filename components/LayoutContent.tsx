@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Navbar from './Navbar';
-import { Footer } from '@/components/organisms/Footer/Footer';
+
 import { ReactNode } from 'react';
 
 export const LayoutContent = ({ children }: { children: ReactNode }) => {
@@ -22,7 +22,7 @@ export const LayoutContent = ({ children }: { children: ReactNode }) => {
             <main className={!hideNavbar ? "min-h-screen pt-16" : ""}>
                 {children}
             </main>
-            {showFooter && <Footer />}
+            {/* Footer removed as per request */}
         </>
     );
 };

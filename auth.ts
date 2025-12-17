@@ -5,6 +5,7 @@ import Facebook from 'next-auth/providers/facebook';
 import { authConfig } from './auth.config';
 import { prisma } from './lib/prisma';
 import { verifyPassword, hashPassword } from './lib/auth-utils';
+import { generateUserId } from './lib/user-utils';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
@@ -114,24 +115,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     // User does not exist, create new one
                     // 1. Generate ID
                     // 1. Generate ID
-                    const lastUsers = await prisma.pengguna.findMany({
-                        where: { id_pengguna: { startsWith: 'PG' } },
-                        orderBy: { id_pengguna: 'desc' },
-                        take: 5
-                    });
-
-                    let maxId = 0;
-                    if (lastUsers.length > 0) {
-                        for (const user of lastUsers) {
-                            const idStr = user.id_pengguna.replace('PG', '');
-                            if (/^\d+$/.test(idStr)) {
-                                const num = parseInt(idStr, 10);
-                                if (num > maxId) maxId = num;
-                            }
-                        }
-                    }
-
-                    const newId = `PG${String(maxId + 1).padStart(4, '0')}`;
+                    // 1. Generate ID
+                    const newId = await generateUserId();
 
                     // 2. Create User
                     // Note: We need a dummy password. 

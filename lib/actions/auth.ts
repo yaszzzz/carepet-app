@@ -4,6 +4,7 @@ import { signIn as nextAuthSignIn, signOut as nextAuthSignOut } from '@/auth';
 import { AuthError } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { hashPassword } from '@/lib/auth-utils';
+import { generateUserId } from '@/lib/user-utils';
 
 /**
  * Register a new User
@@ -35,31 +36,8 @@ export async function registerUser(data: {
                 return { error: 'Email sudah terdaftar' };
             }
 
-            // Generate unique ID (format: PG0001, PG0002, etc.)
-            // Fetch the last few users to ensure we get a valid number even if the very last one is malformed (e.g., PG0NaN)
-            const lastUsers = await prisma.pengguna.findMany({
-                where: {
-                    id_pengguna: {
-                        startsWith: 'PG'
-                    }
-                },
-                orderBy: { id_pengguna: 'desc' },
-                take: 5
-            });
-
-            let maxId = 0;
-            if (lastUsers.length > 0) {
-                for (const user of lastUsers) {
-                    const idStr = user.id_pengguna.replace('PG', '');
-                    // strict check for digits
-                    if (/^\d+$/.test(idStr)) {
-                        const num = parseInt(idStr, 10);
-                        if (num > maxId) maxId = num;
-                    }
-                }
-            }
-
-            const newId = `PG${String(maxId + 1).padStart(4, '0')}`;
+            // Generate unique ID
+            const newId = await generateUserId();
 
             // Create user
             await prisma.pengguna.create({
@@ -88,13 +66,16 @@ export async function registerUser(data: {
                     return { error: 'Email sudah terdaftar' };
                 }
 
-                // Check if error is due to id_pengguna (retry needed)
+                // If it's ID collision, the loop would handle it if we were doing it manually,
+                // but generateUserId also has retries. If it fails here, it might be a race condition 
+                // between generateUserId and create. 
+                // We'll let the outer loop retry if it was ID related (though generateUserId tries to avoid it).
                 if (
                     (Array.isArray(target) && target.includes('id_pengguna')) ||
                     (typeof target === 'string' && target.includes('id_pengguna'))
                 ) {
                     attempt++;
-                    console.log(`ID Collision detected, retrying (Attempt ${attempt}/${MAX_RETRIES})...`);
+                    console.log(`ID Collision detected during create, retrying (Attempt ${attempt}/${MAX_RETRIES})...`);
                     continue; // Retry the loop
                 }
             }
@@ -105,6 +86,34 @@ export async function registerUser(data: {
     }
 
     return { error: 'Gagal membuat ID unik. Silakan coba lagi.' };
+}
+
+/**
+ * Send Forgot Password Email (Stub)
+ * @param email - User email
+ */
+export async function forgotPassword(email: string) {
+    // 1. Check if user exists
+    const user = await prisma.pengguna.findUnique({
+        where: { email }
+    });
+
+    if (!user) {
+        // Return success even if user not found to prevent enumeration
+        return { success: true, message: 'Jika email terdaftar, link reset akan dikirim.' };
+    }
+
+    // 2. Generate Reset Token (In a real app, save this to DB with expiry)
+    const resetToken = crypto.randomUUID();
+
+    // 3. Send Email (Stub)
+    console.log(`[EMAIL STUB] Sending Password Reset Link to ${email}`);
+    console.log(`[EMAIL STUB] Token: ${resetToken}`);
+    console.log(`[EMAIL STUB] Link: http://localhost:3000/reset-password?token=${resetToken}`);
+
+    // In production, use an email provider here (e.g. Resend, Nodemailer)
+
+    return { success: true, message: 'Jika email terdaftar, link reset akan dikirim.' };
 }
 
 /**
