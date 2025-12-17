@@ -8,7 +8,7 @@ interface AdminAuthLayoutProps {
 
 export const AdminAuthLayout = ({ children }: AdminAuthLayoutProps) => {
     return (
-        <div className="min-h-screen w-full flex bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pt-10">
+        <div className="min-h-screen w-full flex bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
             {/* Left Side - Admin Hero (Hidden on mobile) */}
             <div className="hidden lg:flex w-1/2 relative items-center justify-center p-12">
                 <div className="relative w-full max-w-lg aspect-square">

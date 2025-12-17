@@ -21,14 +21,18 @@ export async function createBooking(formData: FormData) {
     }
 
     // Validate dates
+    // Validate dates
     const start = new Date(tgl_masuk);
     const end = new Date(tgl_keluar);
 
-    if (start >= end) {
-        return { error: 'Tanggal keluar harus setelah tanggal masuk' };
+    if (start > end) {
+        return { error: 'Tanggal keluar harus setelah atau sama dengan tanggal masuk' };
     }
 
-    if (start < new Date()) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (start < today) {
         return { error: 'Tanggal masuk tidak boleh di masa lalu' };
     }
 

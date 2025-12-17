@@ -6,11 +6,12 @@ import { signInUser, socialSignIn } from '@/lib/actions/auth';
 import { Input } from '@/components/atoms/Input/Input';
 import { Button } from '@/components/atoms/Button/Button';
 import { SocialAuthButton } from '@/components/molecules/SocialAuthButton/SocialAuthButton';
-import { Mail, Lock, Chrome, Facebook } from 'lucide-react';
+import { Mail, Lock, Chrome, Facebook, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 
 export const LoginForm = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,9 +60,18 @@ export const LoginForm = () => {
                     <Input
                         name="password"
                         label="Password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         placeholder="••••••••"
                         leftIcon={<Lock size={18} />}
+                        rightIcon={
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="focus:outline-none hover:text-gray-600 transition-colors"
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        }
                         required
                         disabled={isLoading}
                     />
