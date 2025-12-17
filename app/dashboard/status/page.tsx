@@ -19,7 +19,7 @@ export default async function StatusPage() {
                 id_pengguna: session.user.id
             },
             status: {
-                in: ['Proses', 'Menunggu'] // Assuming these are active statuses
+                in: ['Proses', 'Menunggu Pembayaran', 'Menunggu Konfirmasi'] // Include all active statuses
             }
         },
         include: {

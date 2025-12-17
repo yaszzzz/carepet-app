@@ -3,6 +3,8 @@
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { formatDistanceToNow } from 'date-fns';
+import { id } from 'date-fns/locale';
 
 export interface NotificationItem {
     id: string;
@@ -38,8 +40,18 @@ export async function createNotification(data: {
     }
 }
 
+import { isRateLimited } from '@/lib/rate-limit';
+
 export async function getAdminNotifications(): Promise<NotificationItem[]> {
     const session = await auth();
+    const userId = session?.user?.id || 'anonymous';
+
+    // Rate limit: 20 requests per minute
+    if (isRateLimited(`admin-notif-${userId}`, 20, 60000)) {
+        console.warn('Rate limit exceeded for admin notifications');
+        return [];
+    }
+
     // if (!session?.user?.email) return []; // Allow broad access for now or check role if setup
 
     try {
@@ -53,7 +65,7 @@ export async function getAdminNotifications(): Promise<NotificationItem[]> {
             take: 20
         });
 
-        return notifications.map(n => ({
+        return notifications.map((n) => ({
             id: n.id_notifikasi,
             title: n.title,
             message: n.message,
@@ -72,6 +84,12 @@ export async function getNotifications(): Promise<NotificationItem[]> {
     const session = await auth();
     if (!session?.user?.id) return []; // Need user ID
 
+    // Rate limit: 20 requests per minute
+    if (isRateLimited(`user-notif-${session.user.id}`, 20, 60000)) {
+        console.warn('Rate limit exceeded for user notifications');
+        return [];
+    }
+
     try {
         const notifs = await prisma.notifikasi.findMany({
             where: {
@@ -83,7 +101,7 @@ export async function getNotifications(): Promise<NotificationItem[]> {
             take: 20
         });
 
-        return notifs.map(n => ({
+        return notifs.map((n) => ({
             id: n.id_notifikasi,
             title: n.title,
             message: n.message,

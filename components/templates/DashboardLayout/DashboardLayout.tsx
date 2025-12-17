@@ -61,7 +61,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 setIsLoadingNotif(false);
             }
         };
+
         fetchNotifs();
+
+        // Poll every 10 seconds
+        const interval = setInterval(fetchNotifs, 10000);
+        return () => clearInterval(interval);
     }, []);
 
     // ... (rest of render)

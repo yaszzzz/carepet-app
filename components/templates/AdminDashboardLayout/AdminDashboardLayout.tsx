@@ -68,7 +68,12 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
                 }
             }
         };
+
         fetchNotifs();
+
+        // Poll every 10 seconds
+        const interval = setInterval(fetchNotifs, 10000);
+        return () => clearInterval(interval);
     }, [session]);
 
     return (
