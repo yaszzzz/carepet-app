@@ -22,7 +22,11 @@ export default async function ServicesPage() {
                         description={service.deskripsi}
                         duration="1 Hari" // Default
                         category="other" // Default since not in DB
-                        details={[]} // Default since not in DB
+                        details={[
+                            "Layanan profesional",
+                            "Peralatan steril",
+                            "Penanganan penuh kasih sayang"
+                        ]} // Default details
                         featured={false} // Default
                         bookingHref={`/dashboard/services/book/${service.id_layanan}`}
                     />

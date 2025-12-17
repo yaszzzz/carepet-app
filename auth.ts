@@ -165,6 +165,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     token.id = user.id;
                     // @ts-ignore
                     token.role = user.role;
+                    // @ts-ignore
+                    token.picture = user.image;
                 }
             }
             return token;

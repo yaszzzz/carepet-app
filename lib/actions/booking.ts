@@ -22,8 +22,13 @@ export async function createBooking(formData: FormData) {
 
     // Validate dates
     // Validate dates
+    // Use UTC date to avoid timezone issues when parsing "YYYY-MM-DD"
     const start = new Date(tgl_masuk);
     const end = new Date(tgl_keluar);
+
+    // Normalize check to midnight
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
 
     if (start > end) {
         return { error: 'Tanggal keluar harus setelah atau sama dengan tanggal masuk' };

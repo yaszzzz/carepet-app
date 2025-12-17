@@ -114,6 +114,21 @@ model Pembayaran {
   @@map("pembayaran")
 }
 
+// Tabel Notifikasi
+// Menyimpan notifikasi untuk pengguna dan admin
+model Notifikasi {
+  id_notifikasi String   @id @default(cuid())
+  userId        String?  // ID Pengguna or "ADMIN"
+  title         String
+  message       String
+  isRead        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  type          String   // 'INFO', 'SUCCESS', 'WARNING', 'ERROR'
+  link          String?
+
+  @@map("notifikasi")
+}
+
 // NextAuth.js Models
 // Required for NextAuth session management
 

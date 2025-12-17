@@ -17,7 +17,8 @@ export default async function HistoryPage() {
         where: {
             hewan: {
                 id_pengguna: session.user.id
-            }
+            },
+            status: 'Selesai'
         },
         include: {
             hewan: true,

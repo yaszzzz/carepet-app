@@ -77,7 +77,8 @@ export const AdminLoginForm = () => {
                         </div>
                         <input
                             name="email"
-                            defaultValue={savedUsername}
+                            value={savedUsername}
+                            onChange={(e) => setSavedUsername(e.target.value)}
                             type="text"
                             placeholder="username"
                             required

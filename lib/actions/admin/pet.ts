@@ -4,42 +4,18 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 
-export async function deletePetAdmin(id: string) {
+export async function updatePetAdmin(id_hewan: string, data: {
+    nama_hewan: string;
+    jenis: string;
+    usia: number;
+    kebutuhan_khusus?: string;
+}) {
     const session = await auth();
-    if (!session?.user?.email) {
-        return { error: 'Unauthorized' };
-    }
-
-    try {
-        await prisma.hewan.delete({
-            where: { id_hewan: id }
-        });
-
-        revalidatePath('/admin/pets');
-        return { success: true };
-    } catch (error) {
-        console.error('Failed to delete pet (admin):', error);
-        return { error: 'Gagal menghapus hewan' };
-    }
-}
-
-export async function updatePetAdmin(
-    id: string,
-    data: {
-        nama_hewan: string;
-        jenis: string;
-        usia: number;
-        kebutuhan_khusus?: string | null;
-    }
-) {
-    const session = await auth();
-    if (!session?.user?.email) {
-        return { error: 'Unauthorized' };
-    }
+    if (!session?.user?.email) return { error: 'Unauthorized' };
 
     try {
         await prisma.hewan.update({
-            where: { id_hewan: id },
+            where: { id_hewan },
             data: {
                 nama_hewan: data.nama_hewan,
                 jenis: data.jenis,
@@ -51,7 +27,21 @@ export async function updatePetAdmin(
         revalidatePath('/admin/pets');
         return { success: true };
     } catch (error) {
-        console.error('Failed to update pet (admin):', error);
-        return { error: 'Gagal mengupdate informasi hewan' };
+        return { error: 'Gagal update hewan' };
+    }
+}
+
+export async function deletePetAdmin(id_hewan: string) {
+    const session = await auth();
+    if (!session?.user?.email) return { error: 'Unauthorized' };
+
+    try {
+        await prisma.hewan.delete({
+            where: { id_hewan }
+        });
+        revalidatePath('/admin/pets');
+        return { success: true };
+    } catch (error) {
+        return { error: 'Gagal hapus hewan' };
     }
 }

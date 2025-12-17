@@ -5,6 +5,8 @@ import Navbar from './Navbar';
 
 import { ReactNode } from 'react';
 
+import { Footer } from '@/components/organisms/Footer/Footer';
+
 export const LayoutContent = ({ children }: { children: ReactNode }) => {
     const pathname = usePathname();
 
@@ -22,7 +24,7 @@ export const LayoutContent = ({ children }: { children: ReactNode }) => {
             <main className={!hideNavbar ? "min-h-screen pt-16" : ""}>
                 {children}
             </main>
-            {/* Footer removed as per request */}
+            {showFooter && <Footer />}
         </>
     );
 };

@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { AdminDashboardLayout } from '@/components/templates/AdminDashboardLayout/AdminDashboardLayout';
 import { BarChart3, TrendingUp, DollarSign, Users } from 'lucide-react';
 import { redirect } from 'next/navigation';
+import { RevenueChart } from '@/components/organisms/RevenueChart';
 
 export default async function AdminReportsPage() {
     const session = await auth();
@@ -10,19 +11,50 @@ export default async function AdminReportsPage() {
         redirect('/admin/login');
     }
 
-    // Example aggregations
+    // Aggregations
     const totalRevenue = await prisma.pembayaran.aggregate({
-        _sum: {
-            jumlah_bayar: true
-        }
+        _sum: { jumlah_bayar: true }
     });
 
     const totalBookings = await prisma.pemesanan.count();
     const completedBookings = await prisma.pemesanan.count({
+        where: { status: 'Selesai' }
+    });
+
+    // Monthly Revenue for Chart
+    const currentYear = new Date().getFullYear();
+    const monthlyPayments = await prisma.pembayaran.findMany({
         where: {
-            status: 'Selesai'
+            tanggal_bayar: {
+                gte: new Date(`${currentYear}-01-01`),
+                lte: new Date(`${currentYear}-12-31`)
+            }
+        },
+        select: {
+            tanggal_bayar: true,
+            jumlah_bayar: true
         }
     });
+
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+    const chartData = months.map((month, index) => {
+        const total = monthlyPayments
+            .filter(p => new Date(p.tanggal_bayar).getMonth() === index)
+            .reduce((acc, curr) => acc + curr.jumlah_bayar, 0);
+        return { name: month, total };
+    });
+
+    // Monthly Growth (Simple compare current month vs prev month)
+    const currentMonthIndex = new Date().getMonth();
+    const currentMonthRevenue = chartData[currentMonthIndex]?.total || 0;
+    const prevMonthRevenue = chartData[currentMonthIndex - 1]?.total || 0;
+
+    let growth = 0;
+    if (prevMonthRevenue > 0) {
+        growth = ((currentMonthRevenue - prevMonthRevenue) / prevMonthRevenue) * 100;
+    } else if (currentMonthRevenue > 0) {
+        growth = 100; // 100% growth if prev was 0
+    }
 
     return (
         <AdminDashboardLayout>
@@ -63,22 +95,18 @@ export default async function AdminReportsPage() {
                         <div className="p-3 bg-white/10 rounded-lg">
                             <BarChart3 className="text-white" size={24} />
                         </div>
-                        <span className="text-purple-200 text-sm font-medium">Statistik Bulanan</span>
+                        <span className="text-purple-200 text-sm font-medium">Pertumbuhan Bulanan</span>
                     </div>
                     <h3 className="text-3xl font-bold text-white mb-1">
-                        +12%
+                        {growth > 0 ? '+' : ''}{growth.toFixed(1)}%
                     </h3>
-                    <p className="text-purple-200 text-sm">Peningkatan dari bulan lalu</p>
+                    <p className="text-purple-200 text-sm">Dibandingkan bulan lalu</p>
                 </div>
             </div>
 
-            {/* Placeholder for Chart */}
-            <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 h-96 flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                    <BarChart3 size={48} className="mx-auto mb-4 opacity-50" />
-                    <p>Grafik statistik akan ditampilkan di sini.</p>
-                    <p className="text-sm">(Integrasi chart library diperlukan)</p>
-                </div>
+            <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 h-96">
+                <h3 className="text-lg font-bold text-white mb-6">Grafik Pendapatan {currentYear}</h3>
+                <RevenueChart data={chartData} />
             </div>
         </AdminDashboardLayout>
     );

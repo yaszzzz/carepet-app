@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode, useState, useEffect } from 'react';
-import { getAdminNotifications, NotificationItem } from '@/lib/actions/notifications';
+import { getAdminNotifications, NotificationItem, markAsRead } from '@/lib/actions/notifications';
 import { Toaster } from 'sonner';
 import {
     PawPrint,
@@ -128,6 +128,11 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
                                                 {notifications.map((notif) => (
                                                     <div
                                                         key={notif.id}
+                                                        onClick={async () => {
+                                                            await markAsRead(notif.id);
+                                                            // Optimistic update
+                                                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+                                                        }}
                                                         className={`px-4 py-3 border-b border-gray-700 hover:bg-gray-700 cursor-pointer transition-colors ${!notif.read ? 'bg-indigo-500/5' : ''}`}
                                                     >
                                                         <div className="flex items-start gap-3">

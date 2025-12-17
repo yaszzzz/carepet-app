@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, XCircle, Check, Clock, Calendar, User, PawPrint } from 'lucide-react';
+import { CheckCircle, XCircle, Check, Clock, Calendar, User, PawPrint, Edit } from 'lucide-react';
 import { updateBookingStatus } from '@/lib/actions/admin/booking';
 import { toast } from 'sonner';
+import { AdminBookingStatusModal } from '../organisms/AdminBookingStatusModal';
 
 export interface AdminBookingCardProps {
     booking: {
@@ -20,6 +21,7 @@ export interface AdminBookingCardProps {
         tgl_masuk: Date;
         tgl_keluar: Date;
         status: string;
+        catatan?: string | null;
         layanan: {
             nama_layanan: string;
         };
@@ -27,6 +29,7 @@ export interface AdminBookingCardProps {
 }
 
 const StatusBadge = ({ status }: { status: string }) => {
+    // ... (keep existing StatusBadge)
     const styles = {
         'Menunggu Pembayaran': 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
         'Menunggu Konfirmasi': 'bg-orange-500/10 text-orange-500 border-orange-500/20',
@@ -47,8 +50,10 @@ const StatusBadge = ({ status }: { status: string }) => {
 export const AdminBookingCard = ({ booking }: AdminBookingCardProps) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleUpdateStatus = (status: string) => {
+        // ... (existing handleUpdateStatus logic)
         toast("Ubah status menjadi " + status + "?", {
             action: {
                 label: "Ya",
@@ -73,8 +78,15 @@ export const AdminBookingCard = ({ booking }: AdminBookingCardProps) => {
     };
 
     return (
-        <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
-            <div className="flex justify-between items-start mb-4">
+        <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 relative group">
+            <button
+                onClick={() => setIsModalOpen(true)}
+                className="absolute top-6 right-6 p-1.5 rounded-lg bg-gray-700/50 hover:bg-indigo-500 text-gray-400 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                title="Edit Status & Kondisi"
+            >
+                <Edit size={16} />
+            </button>
+            <div className="flex justify-between items-start mb-4 pr-10">
                 <div className="flex gap-4">
                     <div className="w-12 h-12 rounded-lg bg-gray-700 flex items-center justify-center text-2xl">
                         {booking.hewan.jenis === 'Kucing' ? '🐱' : '🐶'}
@@ -153,6 +165,14 @@ export const AdminBookingCard = ({ booking }: AdminBookingCardProps) => {
                     </div>
                 )}
             </div>
+
+            <AdminBookingStatusModal
+                bookingId={booking.id_pemesanan}
+                currentStatus={booking.status}
+                currentNotes={booking.catatan}
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </div>
     );
 };

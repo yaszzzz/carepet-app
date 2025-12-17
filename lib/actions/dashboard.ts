@@ -68,7 +68,7 @@ export async function getActiveBoarding() {
     const activeBooking = await prisma.pemesanan.findFirst({
         where: {
             hewan: { id_pengguna: user.id_pengguna },
-            status: { in: ['Proses', 'Diterima', 'Lunas'] }, // Priorities for "Active" display
+            status: { in: ['Menunggu Pembayaran', 'Proses', 'Diterima', 'Lunas'] }, // Priorities for "Active" display
             tgl_keluar: { gte: new Date() } // Must not be expired
         },
         orderBy: { tgl_masuk: 'asc' },

@@ -2,103 +2,122 @@
 
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 export interface NotificationItem {
     id: string;
     title: string;
     message: string;
     time: string;
-    read: boolean; // Computed or default
+    read: boolean;
     type: 'info' | 'success' | 'warning' | 'error';
+    link?: string;
+}
+
+export async function createNotification(data: {
+    userId?: string; // If 'ADMIN' string or null, it's for admins.
+    title: string;
+    message: string;
+    type: 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR';
+    link?: string;
+}) {
+    try {
+        await prisma.notifikasi.create({
+            data: {
+                userId: data.userId || 'ADMIN',
+                title: data.title,
+                message: data.message,
+                type: data.type,
+                link: data.link
+            }
+        });
+        return { success: true };
+    } catch (error) {
+        console.error('Failed to create notification:', error);
+        return { error: 'Gagal membuat notifikasi' };
+    }
+}
+
+export async function getAdminNotifications(): Promise<NotificationItem[]> {
+    const session = await auth();
+    if (!session?.user?.email) return [];
+
+    try {
+        const notifs = await prisma.notifikasi.findMany({
+            where: {
+                userId: 'ADMIN'
+            },
+            orderBy: {
+                createdAt: 'desc'
+            },
+            take: 20
+        });
+
+        return notifs.map(n => ({
+            id: n.id_notifikasi,
+            title: n.title,
+            message: n.message,
+            time: formatDate(n.createdAt),
+            read: n.isRead,
+            type: (n.type.toLowerCase() as NotificationItem['type']) || 'info', // Safe cast
+            link: n.link || undefined
+        }));
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
 }
 
 export async function getNotifications(): Promise<NotificationItem[]> {
     const session = await auth();
-    if (!session?.user?.email) return [];
+    if (!session?.user?.id) return []; // Need user ID
 
-    const user = await prisma.pengguna.findUnique({
-        where: { email: session.user.email },
-        include: {
-            hewan: {
-                include: {
-                    pemesanan: {
-                        orderBy: { tgl_masuk: 'desc' },
-                        take: 5, // Last 5 activities
-                        include: { layanan: true }
-                    }
-                }
-            }
-        }
-    });
+    try {
+        const notifs = await prisma.notifikasi.findMany({
+            where: {
+                userId: session.user.id
+            },
+            orderBy: {
+                createdAt: 'desc'
+            },
+            take: 20
+        });
 
-    if (!user) return [];
-
-    const notifications: NotificationItem[] = [];
-
-    // Flatten all bookings from all pets
-    const allBookings = user.hewan.flatMap(pet =>
-        pet.pemesanan.map(booking => ({ ...booking, petName: pet.nama_hewan }))
-    ).sort((a, b) => new Date(b.tgl_masuk).getTime() - new Date(a.tgl_masuk).getTime())
-        .slice(0, 10);
-
-    // Generate notifications based on status
-    for (const booking of allBookings) {
-        // We use a deterministic ID based on status + id to avoid duplicates in React keys if status changes
-        // But for a simple list, booking ID is fine if we only show latest status.
-
-        let title = '';
-        let message = '';
-        let type: NotificationItem['type'] = 'info';
-
-        // Logic for Notification Content
-        switch (booking.status) {
-            case 'Menunggu Pembayaran':
-                title = 'Menunggu Pembayaran';
-                message = `Mohon selesaikan pembayaran untuk layanan ${booking.layanan.nama_layanan} (${booking.petName}).`;
-                type = 'warning';
-                break;
-            case 'Lunas':
-            case 'Diterima':
-                title = 'Booking Dikonfirmasi';
-                message = `Booking untuk ${booking.petName} telah dikonfirmasi.`;
-                type = 'success';
-                break;
-            case 'Selesai':
-                title = 'Layanan Selesai';
-                message = `Layanan untuk ${booking.petName} telah selesai. Terima kasih!`;
-                type = 'info';
-                break;
-            case 'Batal':
-                title = 'Booking Dibatalkan';
-                message = `Booking untuk ${booking.petName} telah dibatalkan.`;
-                type = 'error';
-                break;
-            default:
-                title = 'Status Booking Update';
-                message = `Status booking ${booking.petName}: ${booking.status}`;
-        }
-
-        if (title) {
-            notifications.push({
-                id: `${booking.id_pemesanan}-${booking.status}`,
-                title,
-                message,
-                time: formatDate(booking.tgl_masuk), // Ideally use updatedAt if available
-                read: false, // Cannot track 'read' status without DB table
-                type
-            });
-        }
+        return notifs.map(n => ({
+            id: n.id_notifikasi,
+            title: n.title,
+            message: n.message,
+            time: formatDate(n.createdAt),
+            read: n.isRead,
+            type: (n.type.toLowerCase() as NotificationItem['type']) || 'info',
+            link: n.link || undefined
+        }));
+    } catch (error) {
+        console.error(error);
+        return [];
     }
+}
 
-    return notifications;
+export async function markAsRead(id: string) {
+    try {
+        await prisma.notifikasi.update({
+            where: { id_notifikasi: id },
+            data: { isRead: true }
+        });
+        revalidatePath('/', 'layout');
+        return { success: true };
+    } catch (error) {
+        console.error(error);
+        return { error: 'Gagal update status' };
+    }
 }
 
 function formatDate(date: Date): string {
     const now = new Date();
     const diff = now.getTime() - new Date(date).getTime();
 
-    // Convert to relative time
     const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Baru saja';
     if (mins < 60) return `${mins} menit lalu`;
 
     const hours = Math.floor(mins / 60);
@@ -106,63 +125,4 @@ function formatDate(date: Date): string {
 
     const days = Math.floor(hours / 24);
     return `${days} hari lalu`;
-}
-
-export async function getAdminNotifications(): Promise<NotificationItem[]> {
-    const session = await auth();
-    // Assuming admin role check or loose check for now since it's used in Admin Layout
-    if (!session?.user?.email) return [];
-
-    // Fetch recent bookings that might need attention
-    const bookings = await prisma.pemesanan.findMany({
-        where: {
-            status: {
-                in: ['Menunggu Pembayaran', 'Baru'] // Adjust if 'Baru' exists, otherwise just Menunggu Pembayaran
-            }
-        },
-        orderBy: { tgl_masuk: 'desc' },
-        take: 10,
-        include: {
-            hewan: {
-                include: {
-                    pengguna: true
-                }
-            },
-            pembayaran: true // Check if payment proof exists?
-        }
-    });
-
-    const notifications: NotificationItem[] = [];
-
-    for (const booking of bookings) {
-        let title = '';
-        let message = '';
-        let type: NotificationItem['type'] = 'info';
-
-        if (booking.status === 'Menunggu Pembayaran') {
-            const hasProof = booking.pembayaran.some(p => p.bukti_bayar);
-            if (hasProof) {
-                title = 'Verifikasi Pembayaran';
-                message = `Bukti bayar diunggah oleh ${booking.hewan.pengguna.nama_pengguna}.`;
-                type = 'warning';
-            } else {
-                title = 'Booking Baru';
-                message = `Booking baru dari ${booking.hewan.pengguna.nama_pengguna} (${booking.hewan.nama_hewan}).`;
-                type = 'info';
-            }
-        }
-
-        if (title) {
-            notifications.push({
-                id: `admin-${booking.id_pemesanan}`,
-                title,
-                message,
-                time: formatDate(booking.tgl_masuk), // Or createdAt if available similar to before
-                read: false,
-                type
-            });
-        }
-    }
-
-    return notifications;
 }
