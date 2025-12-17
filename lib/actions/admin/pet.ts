@@ -8,7 +8,7 @@ export async function updatePetAdmin(id_hewan: string, data: {
     nama_hewan: string;
     jenis: string;
     usia: number;
-    kebutuhan_khusus?: string;
+    kebutuhan_khusus?: string | null;
 }) {
     const session = await auth();
     if (!session?.user?.email) return { error: 'Unauthorized' };

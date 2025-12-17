@@ -92,28 +92,33 @@ export async function registerUser(data: {
  * Send Forgot Password Email (Stub)
  * @param email - User email
  */
-export async function forgotPassword(email: string) {
-    // 1. Check if user exists
-    const user = await prisma.pengguna.findUnique({
-        where: { email }
-    });
+export async function forgotPassword(email: string): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+        // 1. Check if user exists
+        const user = await prisma.pengguna.findUnique({
+            where: { email }
+        });
 
-    if (!user) {
-        // Return success even if user not found to prevent enumeration
+        if (!user) {
+            // Return success even if user not found to prevent enumeration
+            return { success: true, message: 'Jika email terdaftar, link reset akan dikirim.' };
+        }
+
+        // 2. Generate Reset Token (In a real app, save this to DB with expiry)
+        const resetToken = crypto.randomUUID();
+
+        // 3. Send Email (Stub)
+        console.log(`[EMAIL STUB] Sending Password Reset Link to ${email}`);
+        console.log(`[EMAIL STUB] Token: ${resetToken}`);
+        console.log(`[EMAIL STUB] Link: http://localhost:3000/reset-password?token=${resetToken}`);
+
+        // In production, use an email provider here (e.g. Resend, Nodemailer)
+
         return { success: true, message: 'Jika email terdaftar, link reset akan dikirim.' };
+    } catch (error) {
+        console.error('Forgot password error:', error);
+        return { success: false, error: 'Terjadi kesalahan saat memproses permintaan Anda.' };
     }
-
-    // 2. Generate Reset Token (In a real app, save this to DB with expiry)
-    const resetToken = crypto.randomUUID();
-
-    // 3. Send Email (Stub)
-    console.log(`[EMAIL STUB] Sending Password Reset Link to ${email}`);
-    console.log(`[EMAIL STUB] Token: ${resetToken}`);
-    console.log(`[EMAIL STUB] Link: http://localhost:3000/reset-password?token=${resetToken}`);
-
-    // In production, use an email provider here (e.g. Resend, Nodemailer)
-
-    return { success: true, message: 'Jika email terdaftar, link reset akan dikirim.' };
 }
 
 /**
