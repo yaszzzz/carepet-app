@@ -113,18 +113,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                     // User does not exist, create new one
                     // 1. Generate ID
-                    const lastUser = await prisma.pengguna.findFirst({
+                    // 1. Generate ID
+                    const lastUsers = await prisma.pengguna.findMany({
                         where: { id_pengguna: { startsWith: 'PG' } },
                         orderBy: { id_pengguna: 'desc' },
+                        take: 5
                     });
 
-                    let newId = 'PG0001';
-                    if (lastUser) {
-                        const lastNumber = parseInt(lastUser.id_pengguna.replace('PG', ''));
-                        if (!isNaN(lastNumber)) {
-                            newId = `PG${String(lastNumber + 1).padStart(4, '0')}`;
+                    let maxId = 0;
+                    if (lastUsers.length > 0) {
+                        for (const user of lastUsers) {
+                            const idStr = user.id_pengguna.replace('PG', '');
+                            if (/^\d+$/.test(idStr)) {
+                                const num = parseInt(idStr, 10);
+                                if (num > maxId) maxId = num;
+                            }
                         }
                     }
+
+                    const newId = `PG${String(maxId + 1).padStart(4, '0')}`;
 
                     // 2. Create User
                     // Note: We need a dummy password. 

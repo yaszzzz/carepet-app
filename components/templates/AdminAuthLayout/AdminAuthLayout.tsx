@@ -8,7 +8,7 @@ interface AdminAuthLayoutProps {
 
 export const AdminAuthLayout = ({ children }: AdminAuthLayoutProps) => {
     return (
-        <div className="min-h-screen w-full flex bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        <div className="min-h-screen w-full flex bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pt-10">
             {/* Left Side - Admin Hero (Hidden on mobile) */}
             <div className="hidden lg:flex w-1/2 relative items-center justify-center p-12">
                 <div className="relative w-full max-w-lg aspect-square">
@@ -91,7 +91,7 @@ export const AdminAuthLayout = ({ children }: AdminAuthLayoutProps) => {
             </div>
 
             {/* Right Side - Form */}
-            <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+            <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
                 <div className="w-full max-w-md space-y-8">
                     {/* Logo */}
                     <div className="flex flex-col items-center">

@@ -193,6 +193,8 @@ export const PaymentInterface = ({ booking, totalAmount, onSuccess }: PaymentInt
             <form action={handleSubmit} className="space-y-6">
                 <input type="hidden" name="bookingId" value={booking.id_pemesanan} />
                 <input type="hidden" name="amount" value={totalAmount} />
+                <input type="hidden" name="methodType" value={methodType} />
+                <input type="hidden" name="paymentProvider" value={selectedProvider} />
 
                 <div className="space-y-3">
                     <label className="text-sm font-medium text-gray-700">Upload Bukti Pembayaran</label>

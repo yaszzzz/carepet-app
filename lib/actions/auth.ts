@@ -36,24 +36,30 @@ export async function registerUser(data: {
             }
 
             // Generate unique ID (format: PG0001, PG0002, etc.)
-            // Only look for IDs that follow the standard format 'PG' to avoid parsing errors
-            // from legacy or non-standard IDs (e.g. 'USER1').
-            const lastUser = await prisma.pengguna.findFirst({
+            // Fetch the last few users to ensure we get a valid number even if the very last one is malformed (e.g., PG0NaN)
+            const lastUsers = await prisma.pengguna.findMany({
                 where: {
                     id_pengguna: {
                         startsWith: 'PG'
                     }
                 },
                 orderBy: { id_pengguna: 'desc' },
+                take: 5
             });
 
-            let newId = 'PG0001';
-            if (lastUser) {
-                const lastNumber = parseInt(lastUser.id_pengguna.replace('PG', ''));
-                if (!isNaN(lastNumber)) {
-                    newId = `PG${String(lastNumber + 1).padStart(4, '0')}`;
+            let maxId = 0;
+            if (lastUsers.length > 0) {
+                for (const user of lastUsers) {
+                    const idStr = user.id_pengguna.replace('PG', '');
+                    // strict check for digits
+                    if (/^\d+$/.test(idStr)) {
+                        const num = parseInt(idStr, 10);
+                        if (num > maxId) maxId = num;
+                    }
                 }
             }
+
+            const newId = `PG${String(maxId + 1).padStart(4, '0')}`;
 
             // Create user
             await prisma.pengguna.create({

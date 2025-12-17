@@ -105,7 +105,8 @@ model Pembayaran {
   id_pemesanan  String   @db.VarChar(8)
   tanggal_bayar DateTime @db.Date
   jumlah_bayar  Int
-  metode        String   @db.VarChar(15)
+  metode        String   @db.VarChar(50)
+  bukti_bayar   String?  @db.VarChar(255)
   
   // Relasi many-to-one dengan Pemesanan
   pemesanan     Pemesanan @relation(fields: [id_pemesanan], references: [id_pemesanan], onDelete: Cascade)

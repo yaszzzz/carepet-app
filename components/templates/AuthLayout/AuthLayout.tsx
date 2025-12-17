@@ -10,7 +10,7 @@ interface AuthLayoutProps {
 
 export const AuthLayout = ({ children }: AuthLayoutProps) => {
     return (
-        <div className="min-h-screen w-full flex bg-gradient-to-r from-[#F0E491]/20 via-[#BBC863]/10 to-[#658C58]/5">
+        <div className="min-h-screen w-full flex bg-gradient-to-r from-[#F0E491]/20 via-[#BBC863]/10 to-[#658C58]/5 pt-15">
             {/* Left Side - Hero/Decorative (Hidden on mobile) */}
             <div className="hidden lg:flex w-1/2 relative items-center justify-center p-12">
                 <div className="relative w-full max-w-lg aspect-square">
@@ -65,7 +65,7 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
             </div>
 
             {/* Right Side - Form */}
-            <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+            <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
                 <div className="w-full max-w-md space-y-8">
                     <div className="flex flex-col items-center">
                         <Link href="/" className="flex items-center gap-2 group mb-8">
@@ -80,7 +80,7 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
                         {children}
                     </div>
 
-                    
+
                 </div>
             </div>
         </div>
