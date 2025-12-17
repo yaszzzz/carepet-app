@@ -18,7 +18,7 @@ import {
 import Link from 'next/link';
 import { signOutUser } from '@/lib/actions/auth';
 import { useSession } from 'next-auth/react';
-import { getNotifications, NotificationItem } from '@/lib/actions/notifications';
+import { getNotifications, NotificationItem, markAsRead } from '@/lib/actions/notifications';
 
 interface DashboardLayoutProps {
     children: ReactNode;
@@ -123,6 +123,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                                                 {notifications.map((notif) => (
                                                     <div
                                                         key={notif.id}
+                                                        onClick={async () => {
+                                                            await markAsRead(notif.id);
+                                                            // Optimistic update
+                                                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+                                                        }}
                                                         className={`px-4 py-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors ${!notif.read ? 'bg-[#F0E491]/10' : ''}`}
                                                     >
                                                         <div className="flex items-start gap-3">

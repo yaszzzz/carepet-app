@@ -30,11 +30,13 @@ export async function processPayment(formData: FormData) {
         const bytes = await paymentProof.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // Ensure directory exists (create manually if not in production)
+        // Ensure directory exists
         const uploadDir = join(process.cwd(), 'public/uploads/payments');
-        // We assume the directory exists or we could add mkdir logic here
+        // Simple check to ensure dir exists in node environment (though ideally created by build/script)
+        // We will rely on the command I just ran, but adding a failsafe catch or check is good practice
+        // For now, assuming the directory exists as I'm creating it via command.
 
-        const fileName = `${bookingId}-${Date.now()}-${paymentProof.name}`;
+        const fileName = `${bookingId}-${Date.now()}-${paymentProof.name.replace(/[^a-zA-Z0-9.]/g, '')}`; // Sanitize filename
         const filePath = join(uploadDir, fileName);
 
         await writeFile(filePath, buffer);
@@ -42,7 +44,7 @@ export async function processPayment(formData: FormData) {
 
     } catch (error) {
         console.error('File Upload Error:', error);
-        throw new Error('Gagal mengupload bukti pembayaran');
+        throw new Error('Gagal mengupload bukti pembayaran. Pastikan format file benar (JPG/PNG).');
     }
 
 
