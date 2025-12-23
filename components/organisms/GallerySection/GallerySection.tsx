@@ -32,14 +32,14 @@ export const GallerySection = () => {
     ];
 
     return (
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-gradient-to-br from-[#F0E491]/20 via-[#BBC863]/10 to-[#658C58]/5">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center max-w-3xl mx-auto mb-16">
                     <Badge className="bg-[#BBC863] text-[#31694E] mb-4">
                         📸 Galeri Kami
                     </Badge>
                     <H2 className="mb-4 text-[#31694E]">Momen Bahagia</H2>
-                    <Lead className="text-gray-600">
+                    <Lead className="text-gray-200">
                         Intip keseruan dan kenyamanan hewan-hewan kesayangan di Care Pet.
                     </Lead>
                 </div>

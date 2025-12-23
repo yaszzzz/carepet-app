@@ -27,14 +27,14 @@ export const TeamSection = () => {
     ];
 
     return (
-        <section className="py-20 bg-[#F9FAFB]">
+        <section className="py-20 bg-gradient-to-br from-[#F0E491]/20 via-[#BBC863]/10 to-[#658C58]/5">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center max-w-3xl mx-auto mb-16">
                     <Badge className="bg-[#658C58] text-white mb-4">
                         👨‍⚕️ Tim Kami
                     </Badge>
                     <H2 className="mb-4 text-[#31694E]">Profesional & Terpercaya</H2>
-                    <Lead className="text-gray-600">
+                    <Lead className="text-gray-200">
                         Ditemani oleh para ahli yang berdedikasi tinggi untuk kesehatan dan kebahagiaan hewan Anda.
                     </Lead>
                 </div>

@@ -280,25 +280,7 @@ const AboutSection = React.forwardRef<HTMLDivElement, AboutSectionProps>(
             </div>
           </div>
 
-          {/* Team Section */}
-          <div className="mb-20">
-            <div className="text-center mb-12">
-              <H2 className="mb-4 text-[#31694E]">
-                Tim Profesional Kami
-              </H2>
-              <P className="text-gray-200 max-w-2xl mx-auto">
-                Bertemu dengan tim ahli yang siap merawat hewan kesayangan Anda
-              </P>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {teamMembers.map((member, index) => (
-                <div key={index}>
-                  <TeamCard {...member} />
-                </div>
-              ))}
-            </div>
-          </div>
-
+          
           {/* CTA Section */}
           <div
             className="rounded-2xl p-8 md:p-12 text-center text-white relative overflow-hidden"

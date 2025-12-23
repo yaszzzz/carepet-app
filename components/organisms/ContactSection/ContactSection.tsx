@@ -7,7 +7,7 @@ import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 
 export const ContactSection = () => {
     return (
-        <section className="py-20 bg-white" id="contact">
+        <section className="py-20 bg-gradient-to-br from-[#F0E491]/20 via-[#BBC863]/10 to-[#658C58]/5 text-white" id="contact">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                     <div>
@@ -15,7 +15,7 @@ export const ContactSection = () => {
                             📞 Hubungi Kami
                         </Badge>
                         <H2 className="mb-6 text-[#31694E]">Kami Siap Membantu</H2>
-                        <Lead className="text-gray-600 mb-8">
+                        <Lead className="text-gray-200 mb-8">
                             Punya pertanyaan seputar layanan kami? Jangan ragu untuk menghubungi kami atau datang langsung ke lokasi.
                         </Lead>
 
@@ -25,8 +25,8 @@ export const ContactSection = () => {
                                     <MapPin size={24} />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-gray-900">Lokasi</h4>
-                                    <p className="text-gray-600">Jl. Pet Lover No. 88, Jakarta Selatan</p>
+                                    <h4 className="font-bold text-gray-500">Lokasi</h4>
+                                    <p className="text-gray-200">Jl. Pet Lover No. 88, Jakarta Selatan</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -34,8 +34,8 @@ export const ContactSection = () => {
                                     <Phone size={24} />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-gray-900">Telepon / WhatsApp</h4>
-                                    <p className="text-gray-600">+62 812 3456 7890</p>
+                                    <h4 className="font-bold text-gray-500">Telepon / WhatsApp</h4>
+                                    <p className="text-gray-200">+62 812 3456 7890</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -43,8 +43,8 @@ export const ContactSection = () => {
                                     <Mail size={24} />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-gray-900">Email</h4>
-                                    <p className="text-gray-600">hello@carepet.id</p>
+                                    <h4 className="font-bold text-gray-500">Email</h4>
+                                    <p className="text-gray-200">hello@carepet.id</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -52,8 +52,8 @@ export const ContactSection = () => {
                                     <Clock size={24} />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-gray-900">Jam Operasional</h4>
-                                    <p className="text-gray-600">Senin - Minggu: 08.00 - 20.00 WIB</p>
+                                    <h4 className="font-bold text-gray-500">Jam Operasional</h4>
+                                    <p className="text-gray-200">Senin - Minggu: 08.00 - 20.00 WIB</p>
                                 </div>
                             </div>
                         </div>
