@@ -40,7 +40,7 @@ export default async function DashboardPage() {
                     <BoardingHistoryCard count={stats?.historyCount || 0} />
                 </div>
                 <div id="payments">
-                    <PaymentHistoryCard />
+                    <PaymentHistoryCard count={stats?.paymentCount || 0} />
                 </div>
             </div>
 

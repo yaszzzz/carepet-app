@@ -130,6 +130,27 @@ export async function markAsRead(id: string) {
     }
 }
 
+export async function markAllAsRead() {
+    const session = await auth();
+    if (!session?.user?.id) return { error: 'Unauthorized' };
+
+    try {
+        await prisma.notifikasi.updateMany({
+            where: {
+                userId: session.user.id,
+                isRead: false
+            },
+            data: { isRead: true }
+        });
+        revalidatePath('/', 'layout');
+        revalidatePath('/dashboard/notifications');
+        return { success: true };
+    } catch (error) {
+        console.error(error);
+        return { error: 'Gagal update status' };
+    }
+}
+
 function formatDate(date: Date): string {
     const now = new Date();
     const diff = now.getTime() - new Date(date).getTime();

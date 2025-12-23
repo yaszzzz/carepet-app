@@ -66,6 +66,7 @@ export const AdminBookingStatusModal = ({ bookingId, currentStatus, currentNotes
                         >
                             <option value="Menunggu Pembayaran">Menunggu Pembayaran</option>
                             <option value="Menunggu Konfirmasi">Menunggu Konfirmasi</option>
+                            <option value="Lunas">Lunas (Pembayaran Diterima)</option>
                             <option value="Proses">Proses (Check-in)</option>
                             <option value="Selesai">Selesai</option>
                             <option value="Dibatalkan">Dibatalkan</option>

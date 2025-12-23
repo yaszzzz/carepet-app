@@ -45,11 +45,21 @@ export async function getDashboardStats() {
         }
     });
 
+    // 5. Payment transaction count
+    const paymentCount = await prisma.pembayaran.count({
+        where: {
+            pemesanan: {
+                hewan: { id_pengguna: user.id_pengguna }
+            }
+        }
+    });
+
     return {
         totalPets,
         activeBoardings,
         serviceOrders,
         historyCount,
+        paymentCount,
         userName: user.nama_pengguna
     };
 }

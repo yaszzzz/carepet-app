@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import AdminPaymentsTable from '@/components/organisms/AdminPaymentsTable';
+import { Suspense } from 'react';
 
 export default async function AdminPaymentsPage({
     searchParams,
@@ -54,7 +55,9 @@ export default async function AdminPaymentsPage({
                     <p className="text-gray-400 mt-1">Verifikasi dan pantau transaksi pembayaran.</p>
                 </div>
                 <div className="flex gap-2">
-                    <SearchInput placeholder="Cari ID atau Nama User..." />
+                    <Suspense fallback={<div className="w-64 h-10 bg-gray-700 rounded-lg animate-pulse" />}>
+                        <SearchInput placeholder="Cari ID atau Nama User..." />
+                    </Suspense>
                 </div>
             </div>
 

@@ -50,6 +50,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
     const userEmail = session?.user?.email || 'user@email.com';
     const userName = session?.user?.name || 'User';
+    const userImage = session?.user?.image;
 
     const handleLogout = async () => {
         await signOutUser();
@@ -156,9 +157,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                                                 ))}
                                             </div>
                                             <div className="px-4 py-3 border-t border-gray-100">
-                                                <button className="w-full text-center text-sm text-[#658C58] font-medium hover:underline">
+                                                <Link href="/dashboard/notifications" className="w-full text-center text-sm text-[#658C58] font-medium hover:underline block">
                                                     Lihat semua notifikasi
-                                                </button>
+                                                </Link>
                                             </div>
                                         </div>
                                     </>
@@ -171,8 +172,13 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                                     onClick={() => setUserMenuOpen(!userMenuOpen)}
                                     className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
                                 >
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#658C58] to-[#31694E] flex items-center justify-center text-white text-sm font-bold">
-                                        {userName.charAt(0).toUpperCase()}
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#658C58] to-[#31694E] flex items-center justify-center text-white text-sm font-bold overflow-hidden">
+                                        {userImage ? (
+                                            // eslint-disable-next-line @next/next/no-img-element
+                                            <img src={userImage} alt={userName} className="w-full h-full object-cover" />
+                                        ) : (
+                                            userName.charAt(0).toUpperCase()
+                                        )}
                                     </div>
                                     <ChevronDown size={16} className="text-gray-500" />
                                 </button>

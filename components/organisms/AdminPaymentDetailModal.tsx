@@ -84,11 +84,26 @@ export const AdminPaymentDetailModal = ({ payment, isOpen, onClose }: AdminPayme
                         <h3 className="text-sm font-bold text-gray-300">Bukti Pembayaran</h3>
                         <div className="bg-gray-900 rounded-lg p-2 border border-gray-700 min-h-[200px] flex items-center justify-center">
                             {payment.bukti_bayar ? (
-                                <img
-                                    src={payment.bukti_bayar}
-                                    alt="Bukti Pembayaran"
-                                    className="max-w-full rounded"
-                                />
+                                <a
+                                    href={payment.bukti_bayar}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block cursor-zoom-in"
+                                >
+                                    <img
+                                        src={payment.bukti_bayar}
+                                        alt="Bukti Pembayaran"
+                                        className="max-w-full max-h-[300px] rounded hover:opacity-80 transition-opacity"
+                                        onError={(e) => {
+                                            const img = e.currentTarget;
+                                            img.style.display = 'none';
+                                            const parent = img.parentElement;
+                                            if (parent) {
+                                                parent.innerHTML = '<div class="text-center text-gray-500"><p>Gagal memuat gambar</p><p class="text-xs mt-1 text-gray-600">' + payment.bukti_bayar + '</p></div>';
+                                            }
+                                        }}
+                                    />
+                                </a>
                             ) : (
                                 <div className="text-center text-gray-500">
                                     <ImageIcon size={48} className="mx-auto mb-2 opacity-50" />

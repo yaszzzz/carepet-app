@@ -4,6 +4,7 @@ import { AdminDashboardLayout } from '@/components/templates/AdminDashboardLayou
 import { redirect } from 'next/navigation';
 import { AdminBookingCard, AdminBookingCardProps } from '@/components/molecules/AdminBookingCard';
 import { SearchInput } from '@/components/atoms/SearchInput/SearchInput';
+import { Suspense } from 'react';
 
 export default async function AdminBoardingPage({
     searchParams,
@@ -58,7 +59,9 @@ export default async function AdminBoardingPage({
                     <h1 className="text-2xl sm:text-3xl font-bold text-white">Kelola Penitipan</h1>
                     <p className="text-gray-400 mt-1">Pantau dan kelola status penitipan hewan.</p>
                 </div>
-                <SearchInput placeholder="Cari ID, hewan, atau pemilik..." />
+                <Suspense fallback={<div className="w-64 h-10 bg-gray-700 rounded-lg animate-pulse" />}>
+                    <SearchInput placeholder="Cari ID, hewan, atau pemilik..." />
+                </Suspense>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">

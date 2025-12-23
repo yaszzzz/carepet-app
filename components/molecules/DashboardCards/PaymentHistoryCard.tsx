@@ -4,7 +4,11 @@ import { CreditCard, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/atoms/Card/Card';
 import Link from 'next/link';
 
-export const PaymentHistoryCard = () => {
+interface PaymentHistoryCardProps {
+    count?: number;
+}
+
+export const PaymentHistoryCard = ({ count = 0 }: PaymentHistoryCardProps) => {
     return (
         <Link href="/dashboard/payments">
             <Card hover shadow="lg" className="h-full group cursor-pointer">
@@ -21,7 +25,7 @@ export const PaymentHistoryCard = () => {
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="text-right hidden sm:block">
-                                <p className="text-2xl font-bold text-[#31694E]">8</p>
+                                <p className="text-2xl font-bold text-[#31694E]">{count}</p>
                                 <p className="text-xs text-gray-500">Transaksi</p>
                             </div>
                             <ChevronRight size={24} className="text-gray-400 group-hover:text-[#658C58] group-hover:translate-x-1 transition-all" />
