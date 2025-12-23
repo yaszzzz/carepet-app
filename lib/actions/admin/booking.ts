@@ -89,7 +89,10 @@ export async function updateBookingStatus(formData: FormData) {
         }
 
         revalidatePath('/admin/boarding');
+        revalidatePath('/admin/dashboard');
         revalidatePath('/dashboard/status');
+        revalidatePath('/dashboard');
+        revalidatePath('/dashboard/history');
         return { success: true };
     } catch (error) {
         console.error('Failed to update booking status:', error);

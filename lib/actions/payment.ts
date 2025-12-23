@@ -98,6 +98,9 @@ export async function processPayment(formData: FormData) {
 
     revalidatePath('/dashboard/history');
     revalidatePath('/dashboard/payments');
+    revalidatePath('/dashboard/status');
+    revalidatePath('/dashboard');
+    revalidatePath('/admin/payments');
     redirect('/dashboard/history');
 }
 

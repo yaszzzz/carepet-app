@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/atoms/Button/Button';
+import { UploadProgress } from '@/components/atoms/UploadProgress';
 import { processPayment } from '@/lib/actions/payment';
-import { Clock, Upload, Copy, CheckCircle, Smartphone, CreditCard, QrCode, Shield, Building2 } from 'lucide-react';
+import { Clock, Upload, Copy, CheckCircle, QrCode, Shield, Building2, PartyPopper } from 'lucide-react';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface PaymentInterfaceProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,11 +16,15 @@ interface PaymentInterfaceProps {
 }
 
 export const PaymentInterface = ({ booking, totalAmount, onSuccess }: PaymentInterfaceProps) => {
+    const router = useRouter();
     // Timer Logic
     const [timeLeft, setTimeLeft] = useState(24 * 60 * 60);
     const [isLoading, setIsLoading] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
     const [paymentMethod, setPaymentMethod] = useState<'qris' | 'transfer'>('qris');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -42,7 +48,16 @@ export const PaymentInterface = ({ booking, totalAmount, onSuccess }: PaymentInt
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setSelectedFile(e.target.files[0]);
+            const file = e.target.files[0];
+
+            // Validate file size
+            if (file.size > 2 * 1024 * 1024) {
+                toast.error('Ukuran file maksimal 2MB');
+                return;
+            }
+
+            setSelectedFile(file);
+            toast.success('Bukti pembayaran berhasil dipilih');
         }
     };
 
@@ -55,6 +70,19 @@ export const PaymentInterface = ({ booking, totalAmount, onSuccess }: PaymentInt
         }
 
         setIsLoading(true);
+        setIsUploading(true);
+        setUploadProgress(0);
+
+        // Simulate upload progress
+        const progressInterval = setInterval(() => {
+            setUploadProgress(prev => {
+                if (prev >= 90) {
+                    clearInterval(progressInterval);
+                    return 90;
+                }
+                return prev + 15;
+            });
+        }, 150);
 
         try {
             const formData = new FormData();
@@ -66,10 +94,24 @@ export const PaymentInterface = ({ booking, totalAmount, onSuccess }: PaymentInt
 
             await processPayment(formData);
 
-            toast.success('Pembayaran berhasil dikirim untuk verifikasi');
-            if (onSuccess) onSuccess();
+            clearInterval(progressInterval);
+            setUploadProgress(100);
+            setIsUploading(false);
+
+            // Show success modal instead of immediate redirect
+            setShowSuccessModal(true);
+            toast.success('Pembayaran berhasil dikirim!', { duration: 5000 });
+
+            // Delayed redirect to let user see success message
+            setTimeout(() => {
+                if (onSuccess) onSuccess();
+                router.push('/dashboard/history');
+            }, 3000);
 
         } catch (err: any) {
+            clearInterval(progressInterval);
+            setIsUploading(false);
+            setUploadProgress(0);
             console.error(err);
             toast.error(err.message || 'Gagal mengirim pembayaran');
         } finally {
@@ -96,8 +138,8 @@ export const PaymentInterface = ({ booking, totalAmount, onSuccess }: PaymentInt
                 <button
                     onClick={() => setPaymentMethod('qris')}
                     className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${paymentMethod === 'qris'
-                            ? 'border-[#658C58] bg-[#658C58]/10 text-[#658C58]'
-                            : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                        ? 'border-[#658C58] bg-[#658C58]/10 text-[#658C58]'
+                        : 'border-gray-200 hover:border-gray-300 text-gray-600'
                         }`}
                 >
                     <QrCode size={24} />
@@ -106,8 +148,8 @@ export const PaymentInterface = ({ booking, totalAmount, onSuccess }: PaymentInt
                 <button
                     onClick={() => setPaymentMethod('transfer')}
                     className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${paymentMethod === 'transfer'
-                            ? 'border-[#658C58] bg-[#658C58]/10 text-[#658C58]'
-                            : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                        ? 'border-[#658C58] bg-[#658C58]/10 text-[#658C58]'
+                        : 'border-gray-200 hover:border-gray-300 text-gray-600'
                         }`}
                 >
                     <Building2 size={24} />
@@ -154,7 +196,7 @@ export const PaymentInterface = ({ booking, totalAmount, onSuccess }: PaymentInt
                     <div
                         className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer ${selectedFile ? 'border-emerald-500 bg-emerald-50' : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
                             }`}
-                        onClick={() => fileInputRef.current?.click()}
+                        onClick={() => !isUploading && fileInputRef.current?.click()}
                     >
                         <input
                             type="file"
@@ -177,6 +219,13 @@ export const PaymentInterface = ({ booking, totalAmount, onSuccess }: PaymentInt
                             </div>
                         )}
                     </div>
+
+                    {/* Upload Progress */}
+                    <UploadProgress
+                        progress={uploadProgress}
+                        isUploading={isUploading}
+                        fileName={selectedFile?.name}
+                    />
                 </div>
 
                 <div className="pt-4 border-t border-gray-100">
@@ -204,6 +253,26 @@ export const PaymentInterface = ({ booking, totalAmount, onSuccess }: PaymentInt
                     Pembayaran akan diverifikasi oleh Admin dalam 1x24 jam
                 </p>
             </div>
+
+            {/* Success Modal */}
+            {showSuccessModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in duration-300">
+                    <div className="bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl animate-in zoom-in-95 duration-300">
+                        <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <PartyPopper className="text-emerald-500" size={40} />
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-3">Pembayaran Berhasil!</h2>
+                        <p className="text-gray-600 mb-6">
+                            Pembayaran Anda telah berhasil dikirim dan sedang diproses.
+                            Admin akan memverifikasi pembayaran Anda dalam 1x24 jam.
+                        </p>
+                        <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+                            <div className="w-2 h-2 bg-[#658C58] rounded-full animate-pulse" />
+                            <span>Mengalihkan ke halaman riwayat...</span>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

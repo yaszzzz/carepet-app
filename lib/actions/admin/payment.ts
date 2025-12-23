@@ -45,6 +45,11 @@ export async function verifyPayment(paymentId: string) {
         }
 
         revalidatePath('/admin/payments');
+        revalidatePath('/admin/dashboard');
+        revalidatePath('/dashboard/payments');
+        revalidatePath('/dashboard/history');
+        revalidatePath('/dashboard/status');
+        revalidatePath('/dashboard');
         return { success: true };
     } catch (error) {
         console.error(error);

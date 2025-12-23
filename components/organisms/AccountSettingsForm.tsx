@@ -1,19 +1,86 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/atoms/Card/Card';
 import { Button } from '@/components/atoms/Button/Button';
 import { Input } from '@/components/atoms/Input/Input';
-import { User, Mail, Phone, MapPin, Lock, Camera, Save, AlertCircle } from 'lucide-react';
+import { UploadProgress } from '@/components/atoms/UploadProgress';
+import { User, Mail, Phone, MapPin, Lock, Camera, Save, AlertCircle, Loader2 } from 'lucide-react';
 import { updateProfile, changePassword } from '@/lib/actions/user';
 import { updateProfilePicture } from '@/lib/actions/user-photo';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+
 export const AccountSettingsForm = ({ user }: { user: any }) => {
     const router = useRouter();
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [isLoadingProfile, setIsLoadingProfile] = useState(false);
     const [isLoadingPassword, setIsLoadingPassword] = useState(false);
+    const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
     const [profileMessage, setProfileMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [passwordMessage, setPasswordMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+    const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file size (2MB max)
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error('Ukuran file maksimal 2MB');
+            return;
+        }
+
+        // Show preview immediately
+        const reader = new FileReader();
+        reader.onload = (e) => setPreviewImage(e.target?.result as string);
+        reader.readAsDataURL(file);
+
+        setIsUploadingPhoto(true);
+        setUploadProgress(0);
+
+        // Simulate progress (since server actions don't support progress)
+        const progressInterval = setInterval(() => {
+            setUploadProgress(prev => {
+                if (prev >= 90) {
+                    clearInterval(progressInterval);
+                    return 90;
+                }
+                return prev + 10;
+            });
+        }, 100);
+
+        try {
+            const formData = new FormData();
+            formData.append('photo', file);
+
+            const result = await updateProfilePicture(formData);
+
+            clearInterval(progressInterval);
+            setUploadProgress(100);
+
+            if (result?.error) {
+                toast.error(result.error);
+                setPreviewImage(null);
+            } else {
+                toast.success('Foto profil berhasil diperbarui!');
+                // Force refresh to update session
+                setTimeout(() => {
+                    router.refresh();
+                }, 500);
+            }
+        } catch (error) {
+            clearInterval(progressInterval);
+            toast.error('Gagal mengupload foto');
+            setPreviewImage(null);
+        } finally {
+            setTimeout(() => {
+                setIsUploadingPhoto(false);
+                setUploadProgress(0);
+            }, 1000);
+        }
+    };
 
     const handleUpdateProfile = async (formData: FormData) => {
         setIsLoadingProfile(true);
@@ -23,8 +90,10 @@ export const AccountSettingsForm = ({ user }: { user: any }) => {
 
         if (result?.error) {
             setProfileMessage({ type: 'error', text: result.error });
+            toast.error(result.error);
         } else {
             setProfileMessage({ type: 'success', text: 'Profil berhasil diperbarui' });
+            toast.success('Profil berhasil diperbarui!');
             router.refresh();
         }
         setIsLoadingProfile(false);
@@ -38,13 +107,16 @@ export const AccountSettingsForm = ({ user }: { user: any }) => {
 
         if (result?.error) {
             setPasswordMessage({ type: 'error', text: result.error });
+            toast.error(result.error);
         } else {
             setPasswordMessage({ type: 'success', text: 'Password berhasil diubah' });
-            // Reset form if possible, or just show success
+            toast.success('Password berhasil diubah!');
             (document.getElementById('password-form') as HTMLFormElement)?.reset();
         }
         setIsLoadingPassword(false);
     };
+
+    const displayImage = previewImage || user.image || `https://ui-avatars.com/api/?name=${user.name}&background=random`;
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -56,48 +128,41 @@ export const AccountSettingsForm = ({ user }: { user: any }) => {
                         <CardDescription>Perbarui foto profil Anda.</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center">
-                        <form action={async (formData) => {
-                            const res = await updateProfilePicture(formData);
-                            if (res?.error) alert(res.error);
-                        }} id="profile-pic-form" className="w-full flex flex-col items-center">
-                            <input
-                                type="file"
-                                name="photo"
-                                id="photo-input"
-                                className="hidden"
-                                accept="image/*"
-                                onChange={(e) => {
-                                    if (e.target.files?.length) {
-                                        e.currentTarget.form?.requestSubmit();
-                                    }
-                                }}
-                            />
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handlePhotoUpload}
+                        />
 
-                            <div
-                                className="relative mb-4 group cursor-pointer"
-                                onClick={() => document.getElementById('photo-input')?.click()}
-                            >
-                                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-50 shadow-inner bg-gray-100">
-                                    {user.image ? (
-                                        <img src={user.image} alt="Profile" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <img
-                                            src={`https://ui-avatars.com/api/?name=${user.name}&background=random`}
-                                            alt="Profile"
-                                            className="w-full h-full object-cover"
-                                        />
-                                    )}
-                                </div>
-                                <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Camera className="text-white" size={24} />
-                                </div>
+                        <div
+                            className={`relative mb-4 group cursor-pointer ${isUploadingPhoto ? 'pointer-events-none' : ''}`}
+                            onClick={() => !isUploadingPhoto && fileInputRef.current?.click()}
+                        >
+                            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-50 shadow-inner bg-gray-100">
+                                <img src={displayImage} alt="Profile" className="w-full h-full object-cover" />
                             </div>
+                            <div className={`absolute inset-0 bg-black/40 rounded-full flex items-center justify-center transition-opacity ${isUploadingPhoto ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                                {isUploadingPhoto ? (
+                                    <Loader2 className="text-white animate-spin" size={24} />
+                                ) : (
+                                    <Camera className="text-white" size={24} />
+                                )}
+                            </div>
+                        </div>
 
-                            <p className="text-sm text-gray-500 mb-4 text-center">
-                                Klik gambar untuk mengubah.<br />
-                                Format: JPG, PNG. Kl. 2MB.
-                            </p>
-                        </form>
+                        <div className="w-full mb-4">
+                            <UploadProgress
+                                progress={uploadProgress}
+                                isUploading={isUploadingPhoto}
+                            />
+                        </div>
+
+                        <p className="text-sm text-gray-500 mb-4 text-center">
+                            Klik gambar untuk mengubah.<br />
+                            Format: JPG, PNG. Max 2MB.
+                        </p>
                     </CardContent>
                 </Card>
             </div>

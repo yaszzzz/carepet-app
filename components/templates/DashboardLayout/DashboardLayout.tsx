@@ -13,11 +13,13 @@ import {
     X,
     LogOut,
     Bell,
-    ChevronDown
+    ChevronDown,
+    Loader2
 } from 'lucide-react';
 import Link from 'next/link';
 import { signOutUser } from '@/lib/actions/auth';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { getNotifications, NotificationItem, markAsRead } from '@/lib/actions/notifications';
 
 interface DashboardLayoutProps {
@@ -35,7 +37,13 @@ const menuItems = [
 ];
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession({
+        required: true,
+        onUnauthenticated() {
+            router.push('/login');
+        }
+    });
+    const router = useRouter();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [notifMenuOpen, setNotifMenuOpen] = useState(false);
@@ -45,6 +53,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
     const handleLogout = async () => {
         await signOutUser();
+        router.refresh();
     };
 
     const [notifications, setNotifications] = useState<NotificationItem[]>([]);
