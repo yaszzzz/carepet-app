@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { format } from 'date-fns';
 import { id as localeId } from 'date-fns/locale';
 import { processPayment } from '@/lib/actions/payment';
-import { PaymentInterface } from '@/components/organisms/PaymentInterface';
+import { PaymentInterface } from '@/components/organisms/PaymentInterface/PaymentInterface';
 
 export default async function PaymentPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await auth();

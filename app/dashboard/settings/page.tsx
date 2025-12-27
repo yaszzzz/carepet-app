@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { DashboardLayout } from '@/components/templates/DashboardLayout/DashboardLayout';
-import { AccountSettingsForm } from '@/components/organisms/AccountSettingsForm';
+import { AccountSettingsForm } from '@/components/organisms/AccountSettingsForm/AccountSettingsForm';
 import { redirect } from 'next/navigation';
 import { Settings } from 'lucide-react';
 

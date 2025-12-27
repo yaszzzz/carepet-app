@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { AdminDashboardLayout } from '@/components/templates/AdminDashboardLayout/AdminDashboardLayout';
 import { Plus, Search } from 'lucide-react'; // Added Search icon if needed, though SearchInput handles it
 import { redirect } from 'next/navigation';
-import { AdminServiceCard } from '@/components/molecules/AdminServiceCard';
+import { AdminServiceCard } from '@/components/molecules/AdminServiceCard/AdminServiceCard';
 import Link from 'next/link';
 import { SearchInput } from '@/components/atoms/SearchInput/SearchInput';
 

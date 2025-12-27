@@ -4,7 +4,7 @@ import { AdminDashboardLayout } from '@/components/templates/AdminDashboardLayou
 import { Card, CardContent } from '@/components/atoms/Card/Card';
 import { Dog, Trash2, Edit, AlertCircle } from 'lucide-react';
 import { redirect } from 'next/navigation';
-import { AdminPetRow } from '@/components/molecules/AdminPetRow';
+import { AdminPetRow } from '@/components/molecules/AdminPetRow/AdminPetRow';
 import { SearchInput } from '@/components/atoms/SearchInput/SearchInput';
 
 export default async function AdminPetsPage(props: {

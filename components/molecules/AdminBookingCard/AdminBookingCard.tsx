@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { CheckCircle, XCircle, Check, Clock, Calendar, User, PawPrint, Edit } from 'lucide-react';
 import { updateBookingStatus } from '@/lib/actions/admin/booking';
 import { toast } from 'sonner';
-import { AdminBookingStatusModal } from '../organisms/AdminBookingStatusModal';
+import { AdminBookingStatusModal } from '../../organisms/AdminBookingStatusModal/AdminBookingStatusModal';
 
 export interface AdminBookingCardProps {
     booking: {

@@ -14,7 +14,7 @@ interface BookingFormProps {
     pets: any[];
 }
 
-import { PaymentInterface } from './PaymentInterface';
+import { PaymentInterface } from '../PaymentInterface/PaymentInterface';
 
 export const BookingForm = ({ service, pets }: BookingFormProps) => {
     const router = useRouter();

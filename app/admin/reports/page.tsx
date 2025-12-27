@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { AdminDashboardLayout } from '@/components/templates/AdminDashboardLayout/AdminDashboardLayout';
 import { BarChart3, TrendingUp, DollarSign, Users } from 'lucide-react';
 import { redirect } from 'next/navigation';
-import { RevenueChart } from '@/components/organisms/RevenueChart';
+import { RevenueChart } from '@/components/organisms/RevenueChart/RevenueChart';
 
 export default async function AdminReportsPage() {
     const session = await auth();

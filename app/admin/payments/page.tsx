@@ -6,7 +6,7 @@ import { SearchInput } from '@/components/atoms/SearchInput/SearchInput';
 import { redirect } from 'next/navigation';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-import AdminPaymentsTable from '@/components/organisms/AdminPaymentsTable';
+import AdminPaymentsTable from '@/components/organisms/AdminPaymentsTable/AdminPaymentsTable';
 import { Suspense } from 'react';
 
 export default async function AdminPaymentsPage(props: {

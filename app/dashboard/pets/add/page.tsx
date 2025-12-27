@@ -1,6 +1,6 @@
 import { DashboardLayout } from '@/components/templates/DashboardLayout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/atoms/Card/Card';
-import { PetForm } from '@/components/organisms/PetForm';
+import { PetForm } from '@/components/organisms/PetForm/PetForm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 

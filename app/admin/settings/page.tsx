@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { AdminDashboardLayout } from '@/components/templates/AdminDashboardLayout/AdminDashboardLayout';
 import { redirect } from 'next/navigation';
-import { AdminSettingsForms } from '@/components/organisms/AdminSettingsForms';
+import { AdminSettingsForms } from '@/components/organisms/AdminSettingsForms/AdminSettingsForms';
 
 export default async function AdminSettingsPage() {
     const session = await auth();

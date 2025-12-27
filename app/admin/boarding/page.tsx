@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { AdminDashboardLayout } from '@/components/templates/AdminDashboardLayout/AdminDashboardLayout';
 import { redirect } from 'next/navigation';
-import { AdminBookingCard, AdminBookingCardProps } from '@/components/molecules/AdminBookingCard';
+import { AdminBookingCard, AdminBookingCardProps } from '@/components/molecules/AdminBookingCard/AdminBookingCard';
 import { SearchInput } from '@/components/atoms/SearchInput/SearchInput';
 import { Suspense } from 'react';
 

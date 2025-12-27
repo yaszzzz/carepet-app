@@ -4,7 +4,7 @@ import { ShoppingCart, Edit, Trash2 } from 'lucide-react';
 import { deleteService } from '@/lib/actions/admin/service';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { EditServiceModal } from '../organisms/EditServiceModal';
+import { EditServiceModal } from '../../organisms/EditServiceModal/EditServiceModal';
 import { toast } from 'sonner';
 
 interface AdminServiceCardProps {

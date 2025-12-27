@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, Edit, Trash2 } from 'lucide-react';
 import { deletePetAdmin } from '@/lib/actions/admin/pet';
-import { EditPetModal } from '@/components/organisms/EditPetModal';
+import { EditPetModal } from '@/components/organisms/EditPetModal/EditPetModal';
 import { toast } from 'sonner';
 
 interface AdminPetRowProps {

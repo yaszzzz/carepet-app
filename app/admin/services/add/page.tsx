@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { AdminDashboardLayout } from '@/components/templates/AdminDashboardLayout/AdminDashboardLayout';
-import { AdminServiceForm } from '@/components/organisms/AdminServiceForm';
+import { AdminServiceForm } from '@/components/organisms/AdminServiceForm/AdminServiceForm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

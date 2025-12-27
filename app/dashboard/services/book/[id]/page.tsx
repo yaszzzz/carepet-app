@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { DashboardLayout } from '@/components/templates/DashboardLayout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/atoms/Card/Card';
-import { BookingForm } from '@/components/organisms/BookingForm';
+import { BookingForm } from '@/components/organisms/BookingForm/BookingForm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

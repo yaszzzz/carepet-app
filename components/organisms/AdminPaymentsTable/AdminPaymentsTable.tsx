@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { SearchInput } from '@/components/atoms/SearchInput/SearchInput';
 import { useState } from 'react';
-import { AdminPaymentDetailModal } from '@/components/organisms/AdminPaymentDetailModal';
+import { AdminPaymentDetailModal } from '@/components/organisms/AdminPaymentDetailModal/AdminPaymentDetailModal';
 
 // Need to pass data from Server Component to Client Component to handle Modal state
 // Or keep separate table component? Keeping table component is better.
