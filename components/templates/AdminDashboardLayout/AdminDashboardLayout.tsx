@@ -1,8 +1,8 @@
 'use client';
 
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode, useState, useEffect, useRef } from 'react';
 import { getAdminNotifications, NotificationItem, markAsRead } from '@/lib/actions/notifications';
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 import {
     PawPrint,
     LayoutDashboard,
@@ -20,6 +20,7 @@ import {
     Shield
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface AdminDashboardLayoutProps {
     children: ReactNode;
@@ -44,6 +45,7 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [notifMenuOpen, setNotifMenuOpen] = useState(false);
     const { data: session } = useSession();
+    const router = useRouter();
 
     const userName = session?.user?.name || 'Admin';
     const userEmail = session?.user?.email || 'admin@carepet.com';
@@ -55,15 +57,55 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
 
     const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
+    // Track which notification IDs have already shown a toast (persists across renders)
+    const shownToastIds = useRef<Set<string>>(new Set());
+    const isFirstLoad = useRef(true);
+
     useEffect(() => {
         let interval: NodeJS.Timeout | null = null;
 
         const fetchNotifs = async () => {
-            // Avoid fetching if not logged in (though layout implies logged in)
-            // and prevent hydration mismatch if possible
             if (session?.user?.email) {
                 try {
                     const data = await getAdminNotifications();
+
+                    // On first load, just store the IDs as "already seen" without showing toasts
+                    if (isFirstLoad.current) {
+                        isFirstLoad.current = false;
+                        data.forEach(item => {
+                            shownToastIds.current.add(item.id);
+                        });
+                        setNotifications(data);
+                        return;
+                    }
+
+                    // Find new unread notifications that haven't been shown as toast yet
+                    const newUnreadItems = data.filter(item =>
+                        !item.read && !shownToastIds.current.has(item.id)
+                    );
+
+                    // Show toast for each new unread notification
+                    newUnreadItems.forEach(item => {
+                        // Mark as shown so we don't show again
+                        shownToastIds.current.add(item.id);
+
+                        toast.info(item.title, {
+                            description: item.message,
+                            duration: Infinity, // Stays until user dismisses
+                            action: item.link ? {
+                                label: 'Lihat',
+                                onClick: () => {
+                                    router.push(item.link!);
+                                    markAsRead(item.id);
+                                }
+                            } : undefined,
+                            onDismiss: () => {
+                                // Mark as read when user dismisses
+                                markAsRead(item.id);
+                            }
+                        });
+                    });
+
                     setNotifications(data);
                 } catch (error) {
                     console.error("Failed to fetch admin notifications", error);
@@ -286,7 +328,7 @@ export const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) =>
                     {children}
                 </div>
             </main>
-            <Toaster position="top-right" />
+            <Toaster position="bottom-right" />
         </div>
     );
 };
