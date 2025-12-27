@@ -9,13 +9,12 @@ import { id } from 'date-fns/locale';
 import AdminPaymentsTable from '@/components/organisms/AdminPaymentsTable';
 import { Suspense } from 'react';
 
-export default async function AdminPaymentsPage({
-    searchParams,
-}: {
-    searchParams?: {
+export default async function AdminPaymentsPage(props: {
+    searchParams: Promise<{
         query?: string;
-    };
+    }>;
 }) {
+    const searchParams = await props.searchParams;
     const session = await auth();
     if (!session?.user) {
         redirect('/admin/login');

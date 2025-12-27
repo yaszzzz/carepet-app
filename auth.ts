@@ -169,6 +169,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     token.picture = user.image;
                 }
             }
+
+            // Refresh user data from database on every session check
+            const userId = (token.id as string) || token.sub;
+            if (userId && token.role === 'user') {
+                const dbUser = await prisma.pengguna.findUnique({
+                    where: { id_pengguna: userId },
+                    select: { nama_pengguna: true, foto: true, email: true }
+                });
+
+                if (dbUser) {
+                    token.name = dbUser.nama_pengguna;
+                    token.picture = dbUser.foto;
+                    token.email = dbUser.email;
+                    // Ensure token.id is set if it was missing (e.g. from sub)
+                    token.id = userId;
+                }
+            }
+
             return token;
         },
         async session({ session, token }) {

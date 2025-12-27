@@ -37,13 +37,19 @@ const menuItems = [
 ];
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-    const { data: session, status } = useSession({
+    const { data: session, status, update } = useSession({
         required: true,
         onUnauthenticated() {
             router.push('/login');
         }
     });
     const router = useRouter();
+
+    // Force session refresh once on mount to get latest data from server
+    useEffect(() => {
+        update();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [notifMenuOpen, setNotifMenuOpen] = useState(false);

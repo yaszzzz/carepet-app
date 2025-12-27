@@ -7,13 +7,12 @@ import { redirect } from 'next/navigation';
 import { AdminPetRow } from '@/components/molecules/AdminPetRow';
 import { SearchInput } from '@/components/atoms/SearchInput/SearchInput';
 
-export default async function AdminPetsPage({
-    searchParams,
-}: {
-    searchParams?: {
+export default async function AdminPetsPage(props: {
+    searchParams: Promise<{
         query?: string;
-    };
+    }>;
 }) {
+    const searchParams = await props.searchParams;
     const session = await auth();
     // In a real app, you'd check for admin role here specifically
     // Ensure only admins can access this page

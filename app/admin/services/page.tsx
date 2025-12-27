@@ -7,13 +7,12 @@ import { AdminServiceCard } from '@/components/molecules/AdminServiceCard';
 import Link from 'next/link';
 import { SearchInput } from '@/components/atoms/SearchInput/SearchInput';
 
-export default async function AdminServicesPage({
-    searchParams,
-}: {
-    searchParams?: {
+export default async function AdminServicesPage(props: {
+    searchParams: Promise<{
         query?: string;
-    };
+    }>;
 }) {
+    const searchParams = await props.searchParams;
     const session = await auth();
     if (!session?.user) {
         redirect('/admin/login');
