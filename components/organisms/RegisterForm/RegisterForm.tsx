@@ -170,29 +170,7 @@ export const RegisterForm = () => {
                 Buat Akun
             </Button>
 
-            <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-gray-200" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                    <span className="bg-white px-2 text-gray-500">Atau daftar dengan</span>
-                </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
-                <SocialAuthButton
-                    icon={<Chrome size={18} />}
-                    label="Google"
-                    onClick={() => socialSignIn('google')}
-                    disabled={isLoading}
-                />
-                <SocialAuthButton
-                    icon={<Facebook size={18} />}
-                    label="Facebook"
-                    onClick={() => socialSignIn('facebook')}
-                    disabled={isLoading}
-                />
-            </div>
 
             <p className="mt-4 text-center text-sm text-gray-600">
                 Sudah punya akun?{' '}
