@@ -16,43 +16,41 @@ export async function getDashboardStats() {
 
     if (!user) return null;
 
-    // 1. Total Pets
-    const totalPets = await prisma.hewan.count({
-        where: { id_pengguna: user.id_pengguna }
-    });
-
-    // 2. Active Boardings (Status NOT 'Selesai' and NOT 'Batal')
-    const activeBoardings = await prisma.pemesanan.count({
-        where: {
-            hewan: { id_pengguna: user.id_pengguna },
-            status: { in: ['Menunggu Pembayaran', 'Menunggu Konfirmasi', 'Lunas', 'Proses'] }
-            // Adjustable based on what "Active" means. Usually 'Proses' means in boarding.
-        }
-    });
-
-    // 3. Service Orders (Total bookings made)
-    const serviceOrders = await prisma.pemesanan.count({
-        where: {
-            hewan: { id_pengguna: user.id_pengguna }
-        }
-    });
-
-    // 4. Completed/History count
-    const historyCount = await prisma.pemesanan.count({
-        where: {
-            hewan: { id_pengguna: user.id_pengguna },
-            status: 'Selesai'
-        }
-    });
-
-    // 5. Payment transaction count
-    const paymentCount = await prisma.pembayaran.count({
-        where: {
-            pemesanan: {
+    // Execute all count queries concurrently for better performance
+    const [totalPets, activeBoardings, serviceOrders, historyCount, paymentCount] = await Promise.all([
+        // 1. Total Pets
+        prisma.hewan.count({
+            where: { id_pengguna: user.id_pengguna }
+        }),
+        // 2. Active Boardings (Status NOT 'Selesai' and NOT 'Batal')
+        prisma.pemesanan.count({
+            where: {
+                hewan: { id_pengguna: user.id_pengguna },
+                status: { in: ['Menunggu Pembayaran', 'Menunggu Konfirmasi', 'Lunas', 'Proses'] }
+            }
+        }),
+        // 3. Service Orders (Total bookings made)
+        prisma.pemesanan.count({
+            where: {
                 hewan: { id_pengguna: user.id_pengguna }
             }
-        }
-    });
+        }),
+        // 4. Completed/History count
+        prisma.pemesanan.count({
+            where: {
+                hewan: { id_pengguna: user.id_pengguna },
+                status: 'Selesai'
+            }
+        }),
+        // 5. Payment transaction count
+        prisma.pembayaran.count({
+            where: {
+                pemesanan: {
+                    hewan: { id_pengguna: user.id_pengguna }
+                }
+            }
+        })
+    ]);
 
     return {
         totalPets,

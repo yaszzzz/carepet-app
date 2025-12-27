@@ -67,6 +67,8 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     const [isLoadingNotif, setIsLoadingNotif] = useState(true);
 
     useEffect(() => {
+        let interval: NodeJS.Timeout | null = null;
+
         const fetchNotifs = async () => {
             try {
                 const data = await getNotifications();
@@ -78,11 +80,37 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             }
         };
 
-        fetchNotifs();
+        const startPolling = () => {
+            fetchNotifs();
+            // Poll every 60 seconds (reduced from 10s to save server costs)
+            interval = setInterval(fetchNotifs, 60000);
+        };
 
-        // Poll every 10 seconds
-        const interval = setInterval(fetchNotifs, 10000);
-        return () => clearInterval(interval);
+        const stopPolling = () => {
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+            }
+        };
+
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                stopPolling();
+            } else {
+                startPolling();
+            }
+        };
+
+        // Initial fetch and start polling
+        startPolling();
+
+        // Pause polling when tab is not visible
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            stopPolling();
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
     }, []);
 
     // ... (rest of render)
