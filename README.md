@@ -10,6 +10,7 @@ CarePet is a modern Pet Care Management System designed to streamline pet boardi
 -   **Authentication**: [NextAuth.js v5](https://authjs.dev/)
 -   **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
 -   **Icons**: [Lucide React](https://lucide.dev/)
+-   **Notifications**: [Sonner](https://sonner.emilkowal.ski/) (Toast)
 
 ## ✨ Features
 
@@ -18,10 +19,16 @@ CarePet is a modern Pet Care Management System designed to streamline pet boardi
     -   Secure login/logout functionality via NextAuth.js.
 
 -   **📊 Admin Dashboard**:
-    -   **Overview**: Quick stats and insights.
+    -   **Real-time Alerts**: Toast notifications for new orders/updates without manual refresh.
+    -   **Overview**: Quick stats and insights (Concurrent Data Fetching).
     -   **Pet Management**: View, Add, Edit, and Delete pet records.
     -   **Service Management**: Manage boarding and care services.
     -   **User Management**: Oversee registered users.
+
+-   **⚡ Performance Optimizations**:
+    -   **Smart Polling**: Notification polling interval optimized to 60s.
+    -   **Visibility Detection**: Pauses polling when the browser tab is inactive to save resources.
+    -   **Concurrent Queries**: Dashboard statistics use `Promise.all` for faster load times.
 
 -   **🐶 Pet Boarding System**:
     -   Track pet details (Name, Type, Age, Special Needs).
@@ -64,7 +71,15 @@ Follow these steps to set up the project locally.
     npx prisma migrate dev --name init
     ```
 
-5.  **Run the application:**
+5.  **Inject Dummy Data (Optional):**
+    Populate the database with test users and bookings:
+    ```bash
+    npx tsx prisma/seed.ts
+    ```
+    *Test Credentials:*
+    - User: `budi@test.com` / `password123`
+
+6.  **Run the application:**
     ```bash
     npm run dev
     ```
