@@ -75,13 +75,13 @@ export default async function AdminDashboardPage() {
         prisma.pemesanan.count({
             where: {
                 status: {
-                    in: ['Proses', 'Menunggu']
+                    in: ['Proses', 'Lunas', 'Menunggu Konfirmasi']
                 }
             }
         }),
         prisma.pemesanan.count({
             where: {
-                status: 'Menunggu'
+                status: 'Menunggu Konfirmasi'
             }
         }),
         prisma.layanan.count()

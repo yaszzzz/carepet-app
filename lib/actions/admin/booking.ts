@@ -77,13 +77,46 @@ export async function updateBookingStatus(formData: FormData) {
         });
 
         if (booking?.hewan.id_pengguna) {
+            // Create status-specific notification
+            let notifTitle = 'Update Status Booking';
+            let notifMessage = `Status booking Anda: ${status}`;
+            let notifType: 'INFO' | 'SUCCESS' | 'WARNING' = 'INFO';
+            let notifLink = '/dashboard/status';
+
+            switch (status) {
+                case 'Lunas':
+                    notifTitle = 'Pembayaran Diterima';
+                    notifMessage = 'Pembayaran Anda telah diverifikasi. Hewan siap untuk check-in.';
+                    notifType = 'SUCCESS';
+                    notifLink = '/dashboard/status';
+                    break;
+                case 'Proses':
+                    notifTitle = 'Hewan Sudah Check-in';
+                    notifMessage = `Hewan Anda sudah masuk penitipan. ${notes ? `Catatan: ${notes}` : ''}`;
+                    notifType = 'SUCCESS';
+                    break;
+                case 'Selesai':
+                    notifTitle = 'Penitipan Selesai';
+                    notifMessage = 'Hewan Anda sudah selesai dititipkan. Silakan jemput!';
+                    notifType = 'SUCCESS';
+                    notifLink = '/dashboard/history';
+                    break;
+                case 'Dibatalkan':
+                    notifTitle = 'Booking Dibatalkan';
+                    notifMessage = 'Booking Anda telah dibatalkan.';
+                    notifType = 'WARNING';
+                    break;
+                default:
+                    notifMessage = `Status: ${status}. ${notes ? `Catatan: ${notes}` : ''} ${photoUrl ? '(Ada foto baru)' : ''}`;
+            }
+
             await prisma.notifikasi.create({
                 data: {
                     userId: booking.hewan.id_pengguna,
-                    title: 'Update Kondisi Hewan',
-                    message: `Status: ${status}. ${notes ? `Catatan: ${notes}` : ''} ${photoUrl ? '(Ada foto baru)' : ''}`,
-                    type: 'INFO',
-                    link: '/dashboard/status'
+                    title: notifTitle,
+                    message: notifMessage,
+                    type: notifType,
+                    link: notifLink
                 }
             });
         }

@@ -25,7 +25,7 @@ export async function getDashboardStats() {
     const activeBoardings = await prisma.pemesanan.count({
         where: {
             hewan: { id_pengguna: user.id_pengguna },
-            status: { in: ['Menunggu Pembayaran', 'Lunas', 'Proses', 'Diterima'] }
+            status: { in: ['Menunggu Pembayaran', 'Menunggu Konfirmasi', 'Lunas', 'Proses'] }
             // Adjustable based on what "Active" means. Usually 'Proses' means in boarding.
         }
     });
@@ -78,7 +78,7 @@ export async function getActiveBoarding() {
     const activeBooking = await prisma.pemesanan.findFirst({
         where: {
             hewan: { id_pengguna: user.id_pengguna },
-            status: { in: ['Menunggu Pembayaran', 'Proses', 'Diterima', 'Lunas'] }, // Priorities for "Active" display
+            status: { in: ['Menunggu Pembayaran', 'Menunggu Konfirmasi', 'Lunas', 'Proses'] }, // Priorities for "Active" display
             tgl_keluar: { gte: new Date() } // Must not be expired
         },
         orderBy: { tgl_masuk: 'asc' },

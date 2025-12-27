@@ -18,7 +18,7 @@ export default async function HistoryPage() {
             hewan: {
                 id_pengguna: session.user.id
             },
-            status: 'Selesai'
+            status: { in: ['Selesai', 'Dibatalkan'] }
         },
         include: {
             hewan: true,
@@ -52,8 +52,9 @@ export default async function HistoryPage() {
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                     <div className="flex items-start gap-4">
                                         <div className={`p-3 rounded-xl ${booking.status === 'Selesai' ? 'bg-green-100 text-green-600' :
-                                            booking.status === 'Proses' ? 'bg-blue-100 text-blue-600' :
-                                                'bg-yellow-100 text-yellow-600'
+                                            booking.status === 'Dibatalkan' ? 'bg-red-100 text-red-600' :
+                                                booking.status === 'Proses' ? 'bg-blue-100 text-blue-600' :
+                                                    'bg-yellow-100 text-yellow-600'
                                             }`}>
                                             <Calendar size={24} />
                                         </div>
@@ -61,8 +62,9 @@ export default async function HistoryPage() {
                                             <div className="flex items-center gap-2 mb-1">
                                                 <h3 className="font-bold text-gray-900">{booking.layanan.nama_layanan}</h3>
                                                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${booking.status === 'Selesai' ? 'bg-green-100 text-green-700' :
-                                                    booking.status === 'Proses' ? 'bg-blue-100 text-blue-700' :
-                                                        'bg-yellow-100 text-yellow-700'
+                                                    booking.status === 'Dibatalkan' ? 'bg-red-100 text-red-700' :
+                                                        booking.status === 'Proses' ? 'bg-blue-100 text-blue-700' :
+                                                            'bg-yellow-100 text-yellow-700'
                                                     }`}>
                                                     {booking.status}
                                                 </span>

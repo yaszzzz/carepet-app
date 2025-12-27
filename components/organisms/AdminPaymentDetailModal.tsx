@@ -121,7 +121,7 @@ export const AdminPaymentDetailModal = ({ payment, isOpen, onClose }: AdminPayme
                     >
                         Tutup
                     </button>
-                    {payment.pemesanan.status === 'Menunggu Pembayaran' || payment.pemesanan.status === 'Menunggu Konfirmasi' ? (
+                    {payment.pemesanan.status === 'Menunggu Konfirmasi' ? (
                         <button
                             onClick={handleVerify}
                             disabled={isLoading}

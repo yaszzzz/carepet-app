@@ -19,6 +19,7 @@ export async function updateServiceAdmin(id: string, data: { name: string; descr
         });
 
         revalidatePath('/admin/services');
+        revalidatePath('/dashboard/services');
         return { success: true };
     } catch (error) {
         console.error(error);
@@ -47,6 +48,7 @@ export async function createServiceAdmin(data: { name: string; description: stri
         });
 
         revalidatePath('/admin/services');
+        revalidatePath('/dashboard/services');
         return { success: true };
     } catch (error) {
         console.error(error);

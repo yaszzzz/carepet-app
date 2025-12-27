@@ -91,7 +91,7 @@ export default async function PaymentsPage() {
                                                     Rp {displayAmount.toLocaleString('id-ID')}
                                                 </td>
                                                 <td className="px-6 py-4 text-center">
-                                                    {booking.status === 'Lunas' || booking.status === 'Selesai' ? (
+                                                    {booking.status === 'Lunas' || booking.status === 'Selesai' || booking.status === 'Proses' ? (
                                                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
                                                             <CheckCircle2 size={12} />
                                                             Lunas
@@ -151,7 +151,7 @@ export default async function PaymentsPage() {
                                             <h3 className="font-bold text-gray-900">{booking.layanan.nama_layanan}</h3>
                                             <p className="text-xs text-gray-600">Hewan: {booking.hewan.nama_hewan}</p>
                                         </div>
-                                        {booking.status === 'Lunas' || booking.status === 'Selesai' ? (
+                                        {booking.status === 'Lunas' || booking.status === 'Selesai' || booking.status === 'Proses' ? (
                                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
                                                 <CheckCircle2 size={12} />
                                                 Lunas

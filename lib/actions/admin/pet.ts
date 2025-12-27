@@ -25,6 +25,8 @@ export async function updatePetAdmin(id_hewan: string, data: {
         });
 
         revalidatePath('/admin/pets');
+        revalidatePath('/dashboard/pets');
+        revalidatePath('/dashboard');
         return { success: true };
     } catch (error) {
         return { error: 'Gagal update hewan' };
@@ -40,6 +42,8 @@ export async function deletePetAdmin(id_hewan: string) {
             where: { id_hewan }
         });
         revalidatePath('/admin/pets');
+        revalidatePath('/dashboard/pets');
+        revalidatePath('/dashboard');
         return { success: true };
     } catch (error) {
         return { error: 'Gagal hapus hewan' };
