@@ -5,8 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import { writeFile } from 'fs/promises'; // Import file system module
-import { join } from 'path';
+import { uploadToBlob } from '@/lib/blob';
 import { createNotification } from '@/lib/actions/notifications';
 
 export async function processPayment(formData: FormData) {
@@ -25,24 +24,10 @@ export async function processPayment(formData: FormData) {
         throw new Error('Invalid payment data');
     }
 
-    // Save File Locally
+    // Upload to Vercel Blob
     let proofUrl = '';
     try {
-        const bytes = await paymentProof.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
-        // Ensure directory exists
-        const uploadDir = join(process.cwd(), 'public/uploads/payments');
-        // Simple check to ensure dir exists in node environment (though ideally created by build/script)
-        // We will rely on the command I just ran, but adding a failsafe catch or check is good practice
-        // For now, assuming the directory exists as I'm creating it via command.
-
-        const fileName = `${bookingId}-${Date.now()}-${paymentProof.name.replace(/[^a-zA-Z0-9.]/g, '')}`; // Sanitize filename
-        const filePath = join(uploadDir, fileName);
-
-        await writeFile(filePath, buffer);
-        proofUrl = `/uploads/payments/${fileName}`;
-
+        proofUrl = await uploadToBlob(paymentProof, 'payments');
     } catch (error) {
         console.error('File Upload Error:', error);
         throw new Error('Gagal mengupload bukti pembayaran. Pastikan format file benar (JPG/PNG).');

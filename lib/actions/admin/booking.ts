@@ -4,9 +4,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { createNotification } from '@/lib/actions/notifications';
-
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
+import { uploadToBlob, deleteFromBlob } from '@/lib/blob';
 
 export async function updateBookingStatus(formData: FormData) {
     const session = await auth();
@@ -24,41 +22,18 @@ export async function updateBookingStatus(formData: FormData) {
     }
 
     let photoUrl = '';
+    let oldPhotoUrl: string | null = null;
 
     try {
         if (photo && photo.size > 0) {
-            const bytes = await photo.arrayBuffer();
-            const buffer = Buffer.from(bytes);
+            // Fetch old booking photo
+            const existingBooking = await prisma.pemesanan.findUnique({
+                where: { id_pemesanan },
+                select: { foto_kondisi: true }
+            });
+            oldPhotoUrl = existingBooking?.foto_kondisi || null;
 
-            // Ensure directory exists - reusing the one created for payments or creating new one
-            // We can reuse 'public/uploads' but maybe 'public/uploads/updates'
-            const uploadDir = join(process.cwd(), 'public/uploads/updates');
-
-            // We need to ensure logic to create directory if not exists.
-            // Since I cannot run command easily here without check, I will assume public/uploads exists
-            // and maybe put it there or just use public/uploads/payments for now?
-            // Better to use a generic 'public/uploads' folder.
-            // Let's assume 'public/uploads' exists because of payments work.
-
-            const fileName = `status-${id_pemesanan}-${Date.now()}-${photo.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
-            const filePath = join(process.cwd(), 'public/uploads', fileName); // Save to root uploads for simplicity or payments
-
-            // Actually, let's use the 'public/uploads/payments' folder I created earlier to be safe,
-            // or stick to 'public/uploads' if I am sure.
-            // I created 'public/uploads/payments'. 
-            // I should create 'public/uploads/updates'.
-
-            // For now, let's just use the same folder to avoid errors, or try to save to 'public/uploads/payments' 
-            // even if semantic is wrong, it works. 
-            // OR I can use 'fs' to check/mkdir but 'fs' is not promised. 'fs/promises' has mkdir.
-
-            // Let's try to be clean.
-            const { mkdir } = require('fs/promises');
-            await mkdir(join(process.cwd(), 'public/uploads/updates'), { recursive: true });
-
-            const finalPath = join(process.cwd(), 'public/uploads/updates', fileName);
-            await writeFile(finalPath, buffer);
-            photoUrl = `/uploads/updates/${fileName}`;
+            photoUrl = await uploadToBlob(photo, 'updates');
         }
 
         await prisma.pemesanan.update({
@@ -126,6 +101,11 @@ export async function updateBookingStatus(formData: FormData) {
         revalidatePath('/dashboard/status');
         revalidatePath('/dashboard');
         revalidatePath('/dashboard/history');
+
+        if (photoUrl && oldPhotoUrl) {
+            await deleteFromBlob(oldPhotoUrl);
+        }
+
         return { success: true };
     } catch (error) {
         console.error('Failed to update booking status:', error);

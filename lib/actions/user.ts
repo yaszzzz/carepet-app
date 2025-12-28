@@ -4,9 +4,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { hashPassword, verifyPassword } from '@/lib/auth-utils';
-
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { uploadToBlob, deleteFromBlob } from '@/lib/blob';
 
 export async function updateProfile(formData: FormData) {
     const session = await auth();
@@ -20,25 +18,20 @@ export async function updateProfile(formData: FormData) {
     const photo = formData.get('photo') as File | null;
 
     let photoUrl;
+    let oldPhotoUrl: string | null = null;
 
     if (photo && photo.size > 0) {
         try {
-            const bytes = await photo.arrayBuffer();
-            const buffer = Buffer.from(bytes);
+            const currentUser = await prisma.pengguna.findUnique({
+                where: { id_pengguna: session.user.id },
+                select: { foto: true }
+            });
+            oldPhotoUrl = currentUser?.foto || null;
 
-            // Ensure directory exists
-            const uploadDir = join(process.cwd(), 'public/uploads/profiles');
-            await mkdir(uploadDir, { recursive: true });
-
-            const fileName = `${session.user.id}-${Date.now()}-${photo.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
-            const filePath = join(uploadDir, fileName);
-
-            await writeFile(filePath, buffer);
-            photoUrl = `/uploads/profiles/${fileName}`;
+            photoUrl = await uploadToBlob(photo, 'profiles');
         } catch (error) {
             console.error('Error uploading profile picture:', error);
-            // Continue update even if photo fails? Maybe return error.
-            // For now, let's just log and skip photo update.
+            // Continue update even if photo fails
         }
     }
 
@@ -57,6 +50,10 @@ export async function updateProfile(formData: FormData) {
             where: { id_pengguna: session.user.id },
             data: dataToUpdate
         });
+
+        if (photoUrl && oldPhotoUrl) {
+            await deleteFromBlob(oldPhotoUrl);
+        }
 
         revalidatePath('/dashboard/settings');
         revalidatePath('/', 'layout'); // Update Navbar everywhere
