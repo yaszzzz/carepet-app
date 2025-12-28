@@ -291,8 +291,13 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                             {/* User Section Mobile */}
                             <div className="pt-4 border-t border-gray-100">
                                 <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-[#F0E491]/20 to-[#BBC863]/10">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#658C58] to-[#31694E] flex items-center justify-center text-white font-bold">
-                                        {userName.charAt(0).toUpperCase()}
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#658C58] to-[#31694E] flex items-center justify-center text-white font-bold overflow-hidden">
+                                        {userImage ? (
+                                            // eslint-disable-next-line @next/next/no-img-element
+                                            <img src={userImage} alt={userName} className="w-full h-full object-cover" />
+                                        ) : (
+                                            userName.charAt(0).toUpperCase()
+                                        )}
                                     </div>
                                     <div className="flex-1">
                                         <p className="font-semibold text-gray-800">Akun Saya</p>
