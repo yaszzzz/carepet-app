@@ -131,7 +131,7 @@ export default async function AdminDashboardPage() {
                         <TrendingUp size={24} className="text-indigo-400" />
                     </div>
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard Admin</h1>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-white">Admin CarePet</h1>
                         <p className="text-gray-400 text-sm sm:text-base">Selamat datang! Kelola sistem CarePet dengan mudah.</p>
                     </div>
                 </div>
