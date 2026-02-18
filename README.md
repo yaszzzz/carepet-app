@@ -1,6 +1,6 @@
 # CarePet App 🐾
 
-CarePet is a modern Pet Care Management System designeed to streamline pet boarding and care services. Built with the latest web technologies, it offers a robust platform for administrators to manage pets, services, and users securely and efficiently.
+CarePet is a modern Pet Care Management System designed to streamline pet boarding and care services. Built with the latest web technologies, it offers a robust platform for administrators to manage pets, services, and users securely and efficiently.
 
 ## 🚀 Tech Stack
 
